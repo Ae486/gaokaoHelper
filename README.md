@@ -69,7 +69,7 @@ src/main/java/com/gaokao/helper/
 
 1. **克隆项目**
    ```bash
-   git clone [项目地址]
+   git clone https://github.com/Ae486/gaokaoHelper.git
    cd gaokao-helper
    ```
 
