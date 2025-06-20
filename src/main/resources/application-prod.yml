@@ -1,0 +1,40 @@
+# 生产环境配置
+spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/gaokao_helper_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: validate # 生产环境只验证表结构
+    show-sql: false # 生产环境不显示SQL
+  
+  # Redis配置
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+
+# 日志配置
+logging:
+  level:
+    com.gaokao.helper: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+  file:
+    name: /var/log/gaokao-helper/application.log
+
+# 生产环境安全配置
+gaokao:
+  helper:
+    security:
+      enabled: true
+    rate-limit:
+      enabled: true
+      requests-per-minute: 60

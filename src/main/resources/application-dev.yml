@@ -1,0 +1,30 @@
+# 开发环境配置
+spring:
+  # 数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/gaokao_helper_dev?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update # 开发环境自动更新表结构
+    show-sql: true # 开发环境显示SQL
+    properties:
+      hibernate:
+        format_sql: true
+
+# 日志配置
+logging:
+  level:
+    com.gaokao.helper: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# 开发环境关闭安全配置（仅用于开发调试）
+gaokao:
+  helper:
+    security:
+      enabled: false
