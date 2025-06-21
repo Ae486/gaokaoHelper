@@ -29,36 +29,43 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * 检查用户名是否存在
-     * 
+     *
      * @param username 用户名
      * @return 是否存在
      */
     boolean existsByUsername(String username);
 
     /**
-     * 根据昵称查找用户
-     * 
-     * @param nickname 昵称
+     * 根据邮箱查找用户
+     *
+     * @param email 邮箱
      * @return 用户信息
      */
-    Optional<User> findByNickname(String nickname);
+    Optional<User> findByEmail(String email);
 
     /**
-     * 检查昵称是否存在
-     * 
-     * @param nickname 昵称
+     * 检查邮箱是否存在
+     *
+     * @param email 邮箱
      * @return 是否存在
      */
-    boolean existsByNickname(String nickname);
+    boolean existsByEmail(String email);
 
     /**
-     * 根据用户名或昵称查找用户
-     * 
-     * @param username 用户名
-     * @param nickname 昵称
+     * 根据手机号查找用户
+     *
+     * @param phone 手机号
      * @return 用户信息
      */
-    Optional<User> findByUsernameOrNickname(String username, String nickname);
+    Optional<User> findByPhone(String phone);
+
+    /**
+     * 检查手机号是否存在
+     *
+     * @param phone 手机号
+     * @return 是否存在
+     */
+    boolean existsByPhone(String phone);
 
     /**
      * 根据创建时间范围查找用户

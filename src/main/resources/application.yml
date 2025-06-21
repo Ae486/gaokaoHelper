@@ -15,9 +15,9 @@ spring:
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gaokao_helper?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/gaokaodb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
     username: root
-    password: 123456
+    password: 114514
     # HikariCP连接池配置
     hikari:
       maximum-pool-size: 20
@@ -30,7 +30,7 @@ spring:
   # JPA配置
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update  # 改为update，让Hibernate自动更新表结构
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
@@ -111,7 +111,7 @@ info:
 
 # JWT配置
 jwt:
-  secret: gaokao-helper-jwt-secret-key-2024
+  secret: gaokao-helper-jwt-secret-key-2024-this-is-a-very-long-secret-key-for-hs512-algorithm-security
   expiration: 86400000 # 24小时，单位毫秒
 
 # 自定义配置

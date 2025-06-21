@@ -2,7 +2,6 @@ package com.gaokao.helper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -16,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableJpaRepositories
 @EnableTransactionManagement
-@EnableCaching
+// @EnableCaching  // 暂时禁用缓存，避免Redis连接问题
 @EnableAsync
 public class GaokaoHelperApplication {
 

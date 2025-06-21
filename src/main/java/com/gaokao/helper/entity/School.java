@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * 院校信息实体类
@@ -88,16 +87,6 @@ public class School {
     @Column(name = "schoolNationalProfessions", columnDefinition = "TEXT COMMENT '特色专业'")
     private String schoolNationalProfessions;
 
-    // 多对一关系：多个学校属于一个省份
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "province_id", insertable = false, updatable = false)
-    private Province province;
-
-    // 一对多关系：一个学校对应多个大学排名记录
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UniversityRanking> universityRankings;
-
-    // 一对多关系：一个学校对应多个录取分数记录
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AdmissionScore> admissionScores;
+    // 暂时移除关联关系，避免循环引用问题
+    // TODO: 后续可以根据需要添加关联关系
 }

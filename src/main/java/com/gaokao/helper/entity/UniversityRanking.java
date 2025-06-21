@@ -59,8 +59,6 @@ public class UniversityRanking {
     @Column(name = "score", columnDefinition = "FLOAT COMMENT '综合得分'")
     private Float score;
 
-    // 多对一关系：多个排名记录属于一个学校
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", insertable = false, updatable = false)
-    private School school;
+    // 暂时移除关联关系，避免循环引用问题
+    // TODO: 后续可以根据需要添加关联关系
 }

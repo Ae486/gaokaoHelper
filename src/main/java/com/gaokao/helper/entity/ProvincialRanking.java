@@ -69,13 +69,6 @@ public class ProvincialRanking {
     @Column(name = "cumulative_count", nullable = false, columnDefinition = "INT NOT NULL COMMENT '累计人数 (即排名)'")
     private Integer cumulativeCount;
 
-    // 多对一关系：多个排名记录属于一个省份
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "province_id", insertable = false, updatable = false)
-    private Province province;
-
-    // 多对一关系：多个排名记录属于一个科类
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_category_id", insertable = false, updatable = false)
-    private SubjectCategory subjectCategory;
+    // 暂时移除关联关系，避免循环引用问题
+    // TODO: 后续可以根据需要添加关联关系
 }
