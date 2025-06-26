@@ -66,6 +66,9 @@ public class SecurityConfig {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
 
+                // 管理员接口 - 需要认证，权限在切面中验证
+                .antMatchers("/api/admin/**").authenticated()
+
                 // Swagger文档接口
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
@@ -85,6 +88,7 @@ public class SecurityConfig {
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/index.html").permitAll()
+                .antMatchers("/admin.html").permitAll()
 
                 // 其他所有请求需要认证
                 .anyRequest().authenticated()

@@ -6,13 +6,13 @@ import com.gaokao.helper.dto.request.RegisterRequest;
 import com.gaokao.helper.dto.response.LoginResponse;
 import com.gaokao.helper.dto.response.RegisterResponse;
 import com.gaokao.helper.service.AuthService;
+import com.gaokao.helper.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author PLeiA
  * @since 2024-06-20
  */
-@WebMvcTest(AuthController.class)
+@WebMvcTest(controllers = AuthController.class, excludeAutoConfiguration = {
+    org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class
+})
 class AuthControllerTest {
 
     @Autowired
@@ -39,6 +42,9 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -55,24 +61,17 @@ class AuthControllerTest {
         registerRequest.setUsername("testuser");
         registerRequest.setPassword("TestPass123");
         registerRequest.setConfirmPassword("TestPass123");
-        registerRequest.setEmail("test@example.com");
-        registerRequest.setPhone("13800138000");
-        registerRequest.setRealName("测试用户");
-        registerRequest.setProvinceId(1);
-        registerRequest.setSubjectTypeId(1);
-        registerRequest.setExamYear(2024);
-        registerRequest.setTotalScore(600);
 
         loginRequest = new LoginRequest();
         loginRequest.setUsername("testuser");
         loginRequest.setPassword("TestPass123");
 
         registerResponse = RegisterResponse.of(
-            1L, "testuser", "test@example.com", "测试用户", LocalDateTime.now()
+            1L, "testuser", LocalDateTime.now()
         );
 
         LoginResponse.UserInfo userInfo = new LoginResponse.UserInfo(
-            1L, "testuser", "test@example.com", "测试用户", 1, 1, 2024, 600
+            1L, "testuser"
         );
         loginResponse = LoginResponse.of("mock-jwt-token", 86400000L, userInfo);
     }
@@ -170,44 +169,4 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.data.message").value("用户名已存在"));
     }
 
-    @Test
-    void testCheckEmailAvailable() throws Exception {
-        // Given
-        when(authService.existsByEmail(anyString())).thenReturn(false);
-
-        // When & Then
-        mockMvc.perform(get("/api/auth/check-email")
-                .param("email", "test@example.com"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.exists").value(false))
-                .andExpect(jsonPath("$.data.available").value(true))
-                .andExpect(jsonPath("$.data.message").value("邮箱可用"));
-    }
-
-    @Test
-    void testCheckPhoneAvailable() throws Exception {
-        // Given
-        when(authService.existsByPhone(anyString())).thenReturn(false);
-
-        // When & Then
-        mockMvc.perform(get("/api/auth/check-phone")
-                .param("phone", "13800138000"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.exists").value(false))
-                .andExpect(jsonPath("$.data.available").value(true))
-                .andExpect(jsonPath("$.data.message").value("手机号可用"));
-    }
-
-    @Test
-    @WithMockUser
-    void testGetPasswordRequirements() throws Exception {
-        // When & Then
-        mockMvc.perform(get("/api/auth/password-requirements"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.requirements").exists())
-                .andExpect(jsonPath("$.data.pattern").exists());
-    }
 }

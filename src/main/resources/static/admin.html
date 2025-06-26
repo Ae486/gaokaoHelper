@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考志愿填报助手 - 管理后台</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-graduation-cap"></i> 管理后台</h2>
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item active">
+                    <a href="#dashboard" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>仪表盘</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#users" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>
+                        <span>用户管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#schools" onclick="showSection('schools')">
+                        <i class="fas fa-university"></i>
+                        <span>学校管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#scores" onclick="showSection('scores')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>录取分数管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#provinces" onclick="showSection('provinces')">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>省份管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#logs" onclick="showSection('logs')">
+                        <i class="fas fa-history"></i>
+                        <span>操作日志</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button onclick="goBack()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> 返回主页
+            </button>
+            <button onclick="logout()" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> 退出登录
+            </button>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content" id="mainContent">
+        <!-- 顶部栏 -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="sidebar-toggle mobile-only" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">仪表盘</h1>
+            </div>
+            <div class="top-bar-right">
+                <span class="user-info">
+                    <i class="fas fa-user-shield"></i>
+                    管理员：<span id="adminUsername">PLeiA</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- 仪表盘 -->
+        <section id="dashboard" class="content-section active">
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="userCount">-</h3>
+                        <p>用户总数</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="schoolCount">-</h3>
+                        <p>学校总数</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="scoreCount">-</h3>
+                        <p>录取分数记录</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="operationCount">-</h3>
+                        <p>操作记录</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> 最近操作</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentLogs" class="recent-logs">
+                            <div class="loading">加载中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 用户管理 -->
+        <section id="users" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> 用户管理</h2>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <input type="text" id="userSearch" placeholder="搜索用户名..." onkeyup="searchUsers()" oninput="handleSearchInput('user')">
+                        <i class="fas fa-search search-icon"></i>
+                        <i class="fas fa-times clear-icon" onclick="clearSearch('user')" style="display: none;"></i>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteSelectedUsers()" id="deleteUsersBtn" style="display: none;">
+                        <i class="fas fa-trash"></i> 删除选中
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="toggleAllUsers(this)"></th>
+                            <th class="sortable" onclick="toggleSort('users', 'id')">
+                                ID
+                                <span class="sort-icons">
+                                    <i class="fas fa-caret-up" id="users-id-asc"></i>
+                                    <i class="fas fa-caret-down" id="users-id-desc"></i>
+                                </span>
+                            </th>
+                            <th>用户名</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="5" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination-controls">
+                    <div class="page-size-selector">
+                        <label>每页显示：</label>
+                        <select id="usersPageSize" onchange="changeUsersPageSize()">
+                            <option value="10">10条</option>
+                            <option value="20">20条</option>
+                            <option value="50">50条</option>
+                            <option value="100">100条</option>
+                        </select>
+                    </div>
+                    <div class="page-jumper">
+                        <label>跳转到：</label>
+                        <input type="number" id="usersPageJump" min="1" placeholder="页码">
+                        <button onclick="jumpToUsersPage()" class="btn btn-sm">跳转</button>
+                    </div>
+                </div>
+                <div class="pagination" id="usersPagination"></div>
+            </div>
+        </section>
+
+        <!-- 学校管理 -->
+        <section id="schools" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-university"></i> 学校管理</h2>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <input type="text" id="schoolSearch" placeholder="搜索学校名称..." onkeyup="searchSchools()" oninput="handleSearchInput('school')">
+                        <i class="fas fa-search search-icon"></i>
+                        <i class="fas fa-times clear-icon" onclick="clearSearch('school')" style="display: none;"></i>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddSchoolModal()">
+                        <i class="fas fa-plus"></i> 添加学校
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteSelectedSchools()" id="deleteSchoolsBtn" style="display: none;">
+                        <i class="fas fa-trash"></i> 删除选中
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="schoolsTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="toggleAllSchools(this)"></th>
+                            <th class="sortable" onclick="toggleSort('schools', 'id')">
+                                ID
+                                <span class="sort-icons">
+                                    <i class="fas fa-caret-up" id="schools-id-asc"></i>
+                                    <i class="fas fa-caret-down" id="schools-id-desc"></i>
+                                </span>
+                            </th>
+                            <th>学校名称</th>
+                            <th>省份</th>
+                            <th>办学层次</th>
+                            <th>院校类型</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schoolsTableBody">
+                        <tr>
+                            <td colspan="7" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination-controls">
+                    <div class="page-size-selector">
+                        <label>每页显示：</label>
+                        <select id="schoolsPageSize" onchange="changeSchoolsPageSize()">
+                            <option value="10">10条</option>
+                            <option value="20">20条</option>
+                            <option value="50">50条</option>
+                            <option value="100">100条</option>
+                        </select>
+                    </div>
+                    <div class="page-jumper">
+                        <label>跳转到：</label>
+                        <input type="number" id="schoolsPageJump" min="1" placeholder="页码">
+                        <button onclick="jumpToSchoolsPage()" class="btn btn-sm">跳转</button>
+                    </div>
+                </div>
+                <div class="pagination" id="schoolsPagination"></div>
+            </div>
+        </section>
+
+        <!-- 录取分数管理 -->
+        <section id="scores" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> 录取分数管理</h2>
+                <div class="section-actions">
+                    <div class="filter-group">
+                        <select id="yearFilter" onchange="filterScores()">
+                            <option value="">全部年份</option>
+                        </select>
+                        <select id="provinceFilter" onchange="filterScores()">
+                            <option value="">全部省份</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddScoreModal()">
+                        <i class="fas fa-plus"></i> 添加记录
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteSelectedScores()" id="deleteScoresBtn" style="display: none;">
+                        <i class="fas fa-trash"></i> 删除选中
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="scoresTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="toggleAllScores(this)"></th>
+                            <th class="sortable" onclick="toggleSort('scores', 'id')">
+                                ID
+                                <span class="sort-icons">
+                                    <i class="fas fa-caret-up" id="scores-id-asc"></i>
+                                    <i class="fas fa-caret-down" id="scores-id-desc"></i>
+                                </span>
+                            </th>
+                            <th>年份</th>
+                            <th>学校ID</th>
+                            <th>省份ID</th>
+                            <th>最低分</th>
+                            <th>最低位次</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoresTableBody">
+                        <tr>
+                            <td colspan="8" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination-controls">
+                    <div class="page-size-selector">
+                        <label>每页显示：</label>
+                        <select id="scoresPageSize" onchange="changeScoresPageSize()">
+                            <option value="10">10条</option>
+                            <option value="20">20条</option>
+                            <option value="50">50条</option>
+                            <option value="100">100条</option>
+                        </select>
+                    </div>
+                    <div class="page-jumper">
+                        <label>跳转到：</label>
+                        <input type="number" id="scoresPageJump" min="1" placeholder="页码">
+                        <button onclick="jumpToScoresPage()" class="btn btn-sm">跳转</button>
+                    </div>
+                </div>
+                <div class="pagination" id="scoresPagination"></div>
+            </div>
+        </section>
+
+        <!-- 省份管理 -->
+        <section id="provinces" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-map-marker-alt"></i> 省份管理</h2>
+                <div class="section-actions">
+                    <button class="btn btn-primary" onclick="showAddProvinceModal()">
+                        <i class="fas fa-plus"></i> 添加省份
+                    </button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="provincesTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" onclick="toggleSort('provinces', 'id')">
+                                ID
+                                <span class="sort-icons">
+                                    <i class="fas fa-caret-up" id="provinces-id-asc"></i>
+                                    <i class="fas fa-caret-down" id="provinces-id-desc"></i>
+                                </span>
+                            </th>
+                            <th>省份名称</th>
+                            <th>省份代码</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="provincesTableBody">
+                        <tr>
+                            <td colspan="4" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 操作日志 -->
+        <section id="logs" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> 操作日志</h2>
+                <div class="section-actions">
+                    <div class="filter-group">
+                        <select id="operationTypeFilter" onchange="filterLogs()">
+                            <option value="">全部操作</option>
+                            <option value="CREATE">创建</option>
+                            <option value="UPDATE">更新</option>
+                            <option value="DELETE">删除</option>
+                            <option value="VIEW">查看</option>
+                        </select>
+                        <select id="tableNameFilter" onchange="filterLogs()">
+                            <option value="">全部表</option>
+                            <option value="users">用户表</option>
+                            <option value="schools">学校表</option>
+                            <option value="admission_scores">录取分数表</option>
+                            <option value="provinces">省份表</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="logsTable">
+                    <thead>
+                        <tr>
+                            <th class="sortable" onclick="toggleSort('logs', 'id')">
+                                ID
+                                <span class="sort-icons">
+                                    <i class="fas fa-caret-up" id="logs-id-asc"></i>
+                                    <i class="fas fa-caret-down" id="logs-id-desc"></i>
+                                </span>
+                            </th>
+                            <th>操作类型</th>
+                            <th>表名</th>
+                            <th>描述</th>
+                            <th>IP地址</th>
+                            <th>操作时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr>
+                            <td colspan="6" class="loading">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination-controls">
+                    <div class="page-size-selector">
+                        <label>每页显示：</label>
+                        <select id="logsPageSize" onchange="changeLogsPageSize()">
+                            <option value="10">10条</option>
+                            <option value="20">20条</option>
+                            <option value="50">50条</option>
+                            <option value="100">100条</option>
+                        </select>
+                    </div>
+                    <div class="page-jumper">
+                        <label>跳转到：</label>
+                        <input type="number" id="logsPageJump" min="1" placeholder="页码">
+                        <button onclick="jumpToLogsPage()" class="btn btn-sm">跳转</button>
+                    </div>
+                </div>
+                <div class="pagination" id="logsPagination"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 模态框容器 -->
+    <div id="modalContainer"></div>
+
+    <!-- 消息提示 -->
+    <div id="message" class="message"></div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

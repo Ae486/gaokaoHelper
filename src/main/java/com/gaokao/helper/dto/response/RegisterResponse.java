@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 用户注册响应DTO
- * 
+ * 简化版本，只包含核心字段：userId, username, createdAt
+ *
  * @author PLeiA
  * @since 2024-06-20
  */
@@ -28,16 +29,6 @@ public class RegisterResponse {
     private String username;
 
     /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 真实姓名
-     */
-    private String realName;
-
-    /**
      * 注册时间
      */
     private LocalDateTime createdAt;
@@ -45,7 +36,7 @@ public class RegisterResponse {
     /**
      * 构造方法
      */
-    public static RegisterResponse of(Long userId, String username, String email, String realName, LocalDateTime createdAt) {
-        return new RegisterResponse(userId, username, email, realName, createdAt);
+    public static RegisterResponse of(Long userId, String username, LocalDateTime createdAt) {
+        return new RegisterResponse(userId, username, createdAt);
     }
 }

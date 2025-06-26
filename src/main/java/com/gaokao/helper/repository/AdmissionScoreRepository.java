@@ -2,6 +2,7 @@ package com.gaokao.helper.repository;
 
 import com.gaokao.helper.entity.AdmissionScore;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * @since 2024-06-20
  */
 @Repository
-public interface AdmissionScoreRepository extends JpaRepository<AdmissionScore, Long> {
+public interface AdmissionScoreRepository extends JpaRepository<AdmissionScore, Long>, JpaSpecificationExecutor<AdmissionScore> {
 
     /**
      * 根据学校ID查找录取分数记录

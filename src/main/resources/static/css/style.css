@@ -107,11 +107,97 @@ body {
     border-color: #e74c3c;
 }
 
+.input-group input.valid {
+    border-color: #27ae60;
+    background-color: #f8fff8;
+}
+
+.input-group input.invalid {
+    border-color: #e74c3c;
+    background-color: #fff8f8;
+}
+
 .input-hint {
     display: block;
     font-size: 12px;
     color: #888;
     margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+.input-hint.success {
+    color: #27ae60;
+    font-weight: 500;
+}
+
+.input-hint.error {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* 密码规范显示 */
+.password-requirements {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    display: none;
+}
+
+.password-requirements.show {
+    display: block;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.requirement:last-child {
+    margin-bottom: 0;
+}
+
+.requirement-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #dee2e6;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.requirement-text {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.requirement.valid .requirement-icon {
+    background-color: #28a745;
+    color: white;
+}
+
+.requirement.valid .requirement-text {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.requirement.invalid .requirement-icon {
+    background-color: #dc3545;
+    color: white;
+}
+
+.requirement.invalid .requirement-text {
+    color: #dc3545;
 }
 
 /* 按钮样式 */
@@ -145,6 +231,25 @@ body {
 .btn-secondary:hover {
     background: #5a6268;
     transform: translateY(-2px);
+}
+
+.btn-admin {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+    margin-bottom: 10px;
+}
+
+.btn-admin:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+/* 用户操作按钮组 */
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 /* 切换表单链接 */
@@ -242,3 +347,5 @@ body {
         font-size: 20px;
     }
 }
+
+

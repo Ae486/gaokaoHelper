@@ -47,15 +47,33 @@
                 </div>
                 <div class="input-group">
                     <label for="registerPassword">密码</label>
-                    <input type="password" id="registerPassword" name="password" required 
-                           placeholder="8-20个字符，包含大小写字母和数字" 
+                    <input type="password" id="registerPassword" name="password" required
+                           placeholder="8-20个字符，包含大小写字母和数字"
                            minlength="8" maxlength="20">
-                    <span class="input-hint">密码必须包含大写字母、小写字母和数字</span>
+                    <div class="password-requirements" id="passwordRequirements">
+                        <div class="requirement" id="req-length">
+                            <span class="requirement-icon">○</span>
+                            <span class="requirement-text">长度 8-20 个字符</span>
+                        </div>
+                        <div class="requirement" id="req-uppercase">
+                            <span class="requirement-icon">○</span>
+                            <span class="requirement-text">包含大写字母</span>
+                        </div>
+                        <div class="requirement" id="req-lowercase">
+                            <span class="requirement-icon">○</span>
+                            <span class="requirement-text">包含小写字母</span>
+                        </div>
+                        <div class="requirement" id="req-number">
+                            <span class="requirement-icon">○</span>
+                            <span class="requirement-text">包含数字</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="confirmPassword">确认密码</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required 
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
                            placeholder="请再次输入密码" minlength="8" maxlength="20">
+                    <span class="input-hint"></span>
                 </div>
                 <button type="submit" class="btn btn-primary">注册</button>
                 <p class="switch-form">
@@ -72,7 +90,13 @@
                 <p><strong>用户名：</strong><span id="username"></span></p>
                 <p><strong>登录时间：</strong><span id="loginTime"></span></p>
             </div>
-            <button onclick="logout()" class="btn btn-secondary">退出登录</button>
+            <div class="user-actions">
+                <!-- 管理员入口按钮，仅对PLeiA用户显示 -->
+                <button id="adminButton" onclick="goToAdmin()" class="btn btn-admin" style="display: none;">
+                    🛠️ 进入管理系统
+                </button>
+                <button onclick="logout()" class="btn btn-secondary">退出登录</button>
+            </div>
         </div>
 
         <!-- 消息提示 -->

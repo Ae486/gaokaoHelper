@@ -50,7 +50,7 @@ public class UniversityRanking {
     /**
      * 排名
      */
-    @Column(name = "rank", columnDefinition = "INT COMMENT '排名'")
+    @Column(name = "`rank`", columnDefinition = "INT COMMENT '排名'")
     private Integer rank;
 
     /**

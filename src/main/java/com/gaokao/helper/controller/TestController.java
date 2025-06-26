@@ -1,12 +1,18 @@
 package com.gaokao.helper.controller;
 
 import com.gaokao.helper.common.Result;
+import com.gaokao.helper.entity.*;
+import com.gaokao.helper.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +25,27 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private SchoolRepository schoolRepository;
+
+    @Autowired
+    private AdmissionScoreRepository admissionScoreRepository;
+
+    @Autowired
+    private ProvinceRepository provinceRepository;
+
+    @Autowired
+    private SubjectCategoryRepository subjectCategoryRepository;
+
+    @Autowired
+    private ProvincialRankingRepository provincialRankingRepository;
+
+    @Autowired
+    private UniversityRankingRepository universityRankingRepository;
 
     /**
      * 健康检查接口
@@ -47,5 +74,113 @@ public class TestController {
     @GetMapping("/")
     public Result<String> home() {
         return Result.success("高考志愿填报助手系统已启动", "访问 /api/test/health 查看系统状态");
+    }
+
+    /**
+     * 测试users表访问
+     */
+    @GetMapping("/users")
+    public Result<Map<String, Object>> testUsersTable() {
+        try {
+            // 获取所有用户
+            List<User> users = userRepository.findAll();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("total_users", users.size());
+            data.put("users", users);
+            data.put("timestamp", LocalDateTime.now());
+
+            return Result.success("成功访问users表", data);
+        } catch (Exception e) {
+            return Result.error("访问users表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试users表连接状态
+     */
+    @GetMapping("/users/count")
+    public Result<Map<String, Object>> testUsersCount() {
+        try {
+            long count = userRepository.count();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("user_count", count);
+            data.put("table_accessible", true);
+            data.put("timestamp", LocalDateTime.now());
+
+            return Result.success("users表连接正常", data);
+        } catch (Exception e) {
+            return Result.error("users表连接失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试所有表的数据量
+     */
+    @GetMapping("/tables/count")
+    public Result<Map<String, Object>> testAllTablesCount() {
+        try {
+            Map<String, Object> data = new HashMap<>();
+
+            // 用户表
+            data.put("users_count", userRepository.count());
+
+            // 学校表
+            data.put("schools_count", schoolRepository.count());
+
+            // 录取分数表
+            data.put("admission_scores_count", admissionScoreRepository.count());
+
+            // 省份表
+            data.put("provinces_count", provinceRepository.count());
+
+            // 科类表
+            data.put("subject_categories_count", subjectCategoryRepository.count());
+
+            // 省份排名表
+            data.put("provincial_rankings_count", provincialRankingRepository.count());
+
+            // 大学排名表
+            data.put("university_rankings_count", universityRankingRepository.count());
+
+            data.put("timestamp", LocalDateTime.now());
+
+            return Result.success("所有表数据统计", data);
+        } catch (Exception e) {
+            return Result.error("获取表数据统计失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试数据完整性
+     */
+    @GetMapping("/data/integrity")
+    public Result<Map<String, Object>> testDataIntegrity() {
+        try {
+            Map<String, Object> data = new HashMap<>();
+
+            // 检查学校表中province_id为NULL的记录
+            long schoolsWithNullProvince = schoolRepository.countByProvinceIdIsNull();
+            data.put("schools_with_null_province", schoolsWithNullProvince);
+
+            // 检查学校表中有效province_id的记录
+            long schoolsWithValidProvince = schoolRepository.countByProvinceIdIsNotNull();
+            data.put("schools_with_valid_province", schoolsWithValidProvince);
+
+            // 获取前5个学校记录
+            List<School> sampleSchools = schoolRepository.findAll().stream().limit(5).collect(Collectors.toList());
+            data.put("sample_schools", sampleSchools);
+
+            // 获取前5个录取分数记录
+            List<AdmissionScore> sampleScores = admissionScoreRepository.findAll().stream().limit(5).collect(Collectors.toList());
+            data.put("sample_admission_scores", sampleScores);
+
+            data.put("timestamp", LocalDateTime.now());
+
+            return Result.success("数据完整性检查", data);
+        } catch (Exception e) {
+            return Result.error("数据完整性检查失败: " + e.getMessage());
+        }
     }
 }

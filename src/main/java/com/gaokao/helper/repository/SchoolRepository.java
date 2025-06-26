@@ -4,6 +4,7 @@ import com.gaokao.helper.entity.School;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ import java.util.Optional;
  * @since 2024-06-20
  */
 @Repository
-public interface SchoolRepository extends JpaRepository<School, Integer> {
+public interface SchoolRepository extends JpaRepository<School, Integer>, JpaSpecificationExecutor<School> {
 
     /**
      * 根据学校名称查找学校
@@ -79,10 +80,24 @@ public interface SchoolRepository extends JpaRepository<School, Integer> {
 
     /**
      * 根据标签查找学校（包含指定标签的学校）
-     * 
+     *
      * @param tag 标签
      * @return 学校列表
      */
     @Query("SELECT s FROM School s WHERE s.tags LIKE %:tag%")
     List<School> findByTagsContaining(@Param("tag") String tag);
+
+    /**
+     * 统计province_id为NULL的学校数量
+     *
+     * @return 数量
+     */
+    long countByProvinceIdIsNull();
+
+    /**
+     * 统计province_id不为NULL的学校数量
+     *
+     * @return 数量
+     */
+    long countByProvinceIdIsNotNull();
 }

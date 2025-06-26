@@ -92,45 +92,7 @@ public class AuthController {
         }
     }
 
-    /**
-     * 检查邮箱是否可用
-     */
-    @GetMapping("/check-email")
-    @Operation(summary = "检查邮箱", description = "检查邮箱是否已被注册")
-    public Result<Map<String, Object>> checkEmail(@RequestParam String email) {
-        try {
-            boolean exists = authService.existsByEmail(email);
-            Map<String, Object> data = new HashMap<>();
-            data.put("exists", exists);
-            data.put("available", !exists);
-            data.put("message", exists ? "邮箱已被注册" : "邮箱可用");
 
-            return Result.success(data);
-        } catch (Exception e) {
-            log.error("检查邮箱异常", e);
-            return Result.error("检查失败，请稍后重试");
-        }
-    }
-
-    /**
-     * 检查手机号是否可用
-     */
-    @GetMapping("/check-phone")
-    @Operation(summary = "检查手机号", description = "检查手机号是否已被注册")
-    public Result<Map<String, Object>> checkPhone(@RequestParam String phone) {
-        try {
-            boolean exists = authService.existsByPhone(phone);
-            Map<String, Object> data = new HashMap<>();
-            data.put("exists", exists);
-            data.put("available", !exists);
-            data.put("message", exists ? "手机号已被注册" : "手机号可用");
-
-            return Result.success(data);
-        } catch (Exception e) {
-            log.error("检查手机号异常", e);
-            return Result.error("检查失败，请稍后重试");
-        }
-    }
 
     /**
      * 获取密码强度要求

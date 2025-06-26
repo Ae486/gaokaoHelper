@@ -27,6 +27,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * AuthService单元测试
+ * 简化版本，只测试核心功能
  * 
  * @author PLeiA
  * @since 2024-06-20
@@ -57,13 +58,6 @@ class AuthServiceImplTest {
         registerRequest.setUsername("testuser");
         registerRequest.setPassword("TestPass123");
         registerRequest.setConfirmPassword("TestPass123");
-        registerRequest.setEmail("test@example.com");
-        registerRequest.setPhone("13800138000");
-        registerRequest.setRealName("测试用户");
-        registerRequest.setProvinceId(1);
-        registerRequest.setSubjectTypeId(1);
-        registerRequest.setExamYear(2024);
-        registerRequest.setTotalScore(600);
 
         loginRequest = new LoginRequest();
         loginRequest.setUsername("testuser");
@@ -72,25 +66,14 @@ class AuthServiceImplTest {
         user = new User();
         user.setId(1L);
         user.setUsername("testuser");
-        // 使用PasswordUtil编码密码以确保测试一致性
         user.setPassword(PasswordUtil.encodePassword("TestPass123"));
-        user.setEmail("test@example.com");
-        user.setPhone("13800138000");
-        user.setRealName("测试用户");
-        user.setProvinceId(1);
-        user.setSubjectTypeId(1);
-        user.setExamYear(2024);
-        user.setTotalScore(600);
         user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
     }
 
     @Test
     void testRegisterSuccess() {
         // Given
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(userRepository.existsByPhone(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         // When
@@ -100,12 +83,9 @@ class AuthServiceImplTest {
         assertNotNull(response);
         assertEquals(user.getId(), response.getUserId());
         assertEquals(user.getUsername(), response.getUsername());
-        assertEquals(user.getEmail(), response.getEmail());
-        assertEquals(user.getRealName(), response.getRealName());
+        assertEquals(user.getCreatedAt(), response.getCreatedAt());
 
         verify(userRepository).existsByUsername("testuser");
-        verify(userRepository).existsByEmail("test@example.com");
-        verify(userRepository).existsByPhone("13800138000");
         verify(userRepository).save(any(User.class));
     }
 
@@ -115,26 +95,11 @@ class AuthServiceImplTest {
         when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
         // When & Then
-        BusinessException exception = assertThrows(BusinessException.class, 
+        BusinessException exception = assertThrows(BusinessException.class,
             () -> authService.register(registerRequest));
-        
+
         assertEquals("用户名已存在", exception.getMessage());
         verify(userRepository).existsByUsername("testuser");
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    void testRegisterEmailExists() {
-        // Given
-        when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        when(userRepository.existsByEmail(anyString())).thenReturn(true);
-
-        // When & Then
-        BusinessException exception = assertThrows(BusinessException.class, 
-            () -> authService.register(registerRequest));
-        
-        assertEquals("邮箱已被注册", exception.getMessage());
-        verify(userRepository).existsByEmail("test@example.com");
         verify(userRepository, never()).save(any(User.class));
     }
 
@@ -154,8 +119,6 @@ class AuthServiceImplTest {
     @Test
     void testLoginSuccess() {
         // Given
-        // 需要模拟PasswordUtil.matches方法返回true
-        // 由于PasswordUtil是静态方法，这里简化测试，假设密码验证通过
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(jwtUtil.generateToken(any(Long.class), anyString())).thenReturn("mock-jwt-token");
 
@@ -200,51 +163,5 @@ class AuthServiceImplTest {
         // Then
         assertTrue(exists);
         verify(userRepository).existsByUsername("testuser");
-    }
-
-    @Test
-    void testExistsByEmail() {
-        // Given
-        when(userRepository.existsByEmail(anyString())).thenReturn(true);
-
-        // When
-        boolean exists = authService.existsByEmail("test@example.com");
-
-        // Then
-        assertTrue(exists);
-        verify(userRepository).existsByEmail("test@example.com");
-    }
-
-    @Test
-    void testExistsByEmailEmpty() {
-        // When
-        boolean exists = authService.existsByEmail("");
-
-        // Then
-        assertFalse(exists);
-        verify(userRepository, never()).existsByEmail(anyString());
-    }
-
-    @Test
-    void testExistsByPhone() {
-        // Given
-        when(userRepository.existsByPhone(anyString())).thenReturn(true);
-
-        // When
-        boolean exists = authService.existsByPhone("13800138000");
-
-        // Then
-        assertTrue(exists);
-        verify(userRepository).existsByPhone("13800138000");
-    }
-
-    @Test
-    void testExistsByPhoneEmpty() {
-        // When
-        boolean exists = authService.existsByPhone("");
-
-        // Then
-        assertFalse(exists);
-        verify(userRepository, never()).existsByPhone(anyString());
     }
 }

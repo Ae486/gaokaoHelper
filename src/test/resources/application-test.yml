@@ -1,11 +1,11 @@
 # 测试环境配置
 spring:
-  # 使用H2内存数据库进行测试
+  # 使用H2内存数据库进行测试，配置为区分大小写
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=FALSE;CASE_INSENSITIVE_IDENTIFIERS=FALSE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
-    password: 
+    password:
   
   # JPA配置
   jpa:

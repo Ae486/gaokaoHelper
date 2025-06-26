@@ -44,6 +44,7 @@ public class LoginResponse {
 
     /**
      * 用户信息内部类
+     * 简化版本，只包含核心字段：userId, username
      */
     @Data
     @NoArgsConstructor
@@ -58,36 +59,6 @@ public class LoginResponse {
          * 用户名
          */
         private String username;
-
-        /**
-         * 邮箱
-         */
-        private String email;
-
-        /**
-         * 真实姓名
-         */
-        private String realName;
-
-        /**
-         * 省份ID
-         */
-        private Integer provinceId;
-
-        /**
-         * 科类ID
-         */
-        private Integer subjectTypeId;
-
-        /**
-         * 高考年份
-         */
-        private Integer examYear;
-
-        /**
-         * 高考总分
-         */
-        private Integer totalScore;
     }
 
     /**

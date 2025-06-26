@@ -53,6 +53,13 @@ public class BusinessException extends RuntimeException {
     }
 
     /**
+     * 创建请求错误异常
+     */
+    public static BusinessException badRequest(String message) {
+        return new BusinessException(Constants.HttpStatus.BAD_REQUEST, message);
+    }
+
+    /**
      * 创建未授权异常
      */
     public static BusinessException unauthorized(String message) {

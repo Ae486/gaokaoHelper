@@ -36,20 +36,4 @@ public interface AuthService {
      * @return 是否存在
      */
     boolean existsByUsername(String username);
-
-    /**
-     * 检查邮箱是否存在
-     *
-     * @param email 邮箱
-     * @return 是否存在
-     */
-    boolean existsByEmail(String email);
-
-    /**
-     * 检查手机号是否存在
-     *
-     * @param phone 手机号
-     * @return 是否存在
-     */
-    boolean existsByPhone(String phone);
 }

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -63,8 +62,6 @@ public class AuthServiceImpl implements AuthService {
         return RegisterResponse.of(
                 savedUser.getId(),
                 savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getRealName(),
                 savedUser.getCreatedAt()
         );
     }
@@ -92,13 +89,7 @@ public class AuthServiceImpl implements AuthService {
         // 4. 构建用户信息
         LoginResponse.UserInfo userInfo = new LoginResponse.UserInfo(
                 user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRealName(),
-                user.getProvinceId(),
-                user.getSubjectTypeId(),
-                user.getExamYear(),
-                user.getTotalScore()
+                user.getUsername()
         );
 
         log.info("用户登录成功: userId={}, username={}", user.getId(), user.getUsername());
@@ -110,22 +101,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        if (email == null || email.trim().isEmpty()) {
-            return false;
-        }
-        return userRepository.existsByEmail(email);
-    }
-
-    @Override
-    public boolean existsByPhone(String phone) {
-        if (phone == null || phone.trim().isEmpty()) {
-            return false;
-        }
-        return userRepository.existsByPhone(phone);
     }
 
     /**
@@ -150,15 +125,7 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(PasswordUtil.encodePassword(request.getPassword()));
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setRealName(request.getRealName());
-        user.setProvinceId(request.getProvinceId());
-        user.setSubjectTypeId(request.getSubjectTypeId());
-        user.setExamYear(request.getExamYear());
-        user.setTotalScore(request.getTotalScore());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
+        // createdAt 由 @CreationTimestamp 自动设置
         return user;
     }
 }

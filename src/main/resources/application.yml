@@ -15,7 +15,7 @@ spring:
   # 数据源配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gaokaodb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/gaokaodb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&connectionCollation=utf8_bin&allowPublicKeyRetrieval=true
     username: root
     password: 114514
     # HikariCP连接池配置
@@ -30,7 +30,7 @@ spring:
   # JPA配置
   jpa:
     hibernate:
-      ddl-auto: update  # 改为update，让Hibernate自动更新表结构
+      ddl-auto: update  # 恢复为update，保持表结构更新
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
