@@ -78,16 +78,18 @@ async function handleLogin(event) {
         const result = await response.json();
         
         if (result.code === 200) {
-            // 登录成功，保存token
+            // 登录成功，保存token和用户信息
             localStorage.setItem('token', result.data.token);
             localStorage.setItem('userInfo', JSON.stringify(result.data.userInfo));
-            
-            showMessage('登录成功！', 'success');
-            
-            // 显示用户信息
+            localStorage.setItem('username', result.data.userInfo.username);
+            localStorage.setItem('userId', result.data.userInfo.id);
+
+            showMessage('登录成功！正在跳转到主界面...', 'success');
+
+            // 跳转到主界面
             setTimeout(() => {
-                showUserInfo(result.data);
-            }, 1000);
+                window.location.href = '/main.html';
+            }, 1500);
             
         } else {
             showMessage(result.message || '登录失败', 'error');

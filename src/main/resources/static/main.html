@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考志愿填报助手 - 主界面</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-graduation-cap"></i>
+                <span>高考志愿填报助手</span>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-user">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="username">用户</span>
+                    <div class="user-dropdown">
+                        <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 欢迎区域 -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h1 class="welcome-title">
+                    <span class="title-text">欢迎使用高考志愿填报助手</span>
+                    <span class="title-emoji">🎓</span>
+                </h1>
+                <p class="welcome-subtitle">科学填报，智慧选择，助力您的大学梦想</p>
+            </div>
+        </section>
+
+        <!-- 功能卡片区域 -->
+        <section class="features-section">
+            <div class="features-container">
+                <h2 class="section-title">
+                    <i class="fas fa-rocket"></i>
+                    核心功能
+                </h2>
+                
+                <div class="features-grid">
+                    <!-- 院校预测 -->
+                    <div class="feature-card available" onclick="navigateTo('recommendation-new.html')">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>院校预测</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>基于历年录取数据，智能预测录取概率</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status available">立即使用</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+
+                    <!-- MBTI测试 -->
+                    <div class="feature-card available" onclick="navigateTo('mbti-test.html')">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>MBTI性格测试</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>发现你的性格类型，找到最适合的专业</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status available">开始测试</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+
+                    <!-- 霍兰德测试 -->
+                    <div class="feature-card available" onclick="navigateTo('holland-test.html')">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-compass"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>霍兰德职业测试</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>探索职业兴趣，发现最适合的专业领域</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status available">开始测试</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+
+                    <!-- AI助手 -->
+                    <div class="feature-card coming-soon">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>AI智能助手</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>24小时在线，为您答疑解惑</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status coming-soon">敬请期待</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+
+                    <!-- 院校PK -->
+                    <div class="feature-card coming-soon">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>院校PK对比</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>多维度对比院校，助您做出最佳选择</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status coming-soon">敬请期待</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+
+                    <!-- 更多功能 -->
+                    <div class="feature-card coming-soon">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                            <div class="card-title">
+                                <h3>更多功能</h3>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p>更多实用功能正在开发中</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-status coming-soon">敬请期待</div>
+                        </div>
+                        <div class="card-hover-effect"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快速入门区域 -->
+        <section class="quick-start-section">
+            <div class="quick-start-container">
+                <h2 class="section-title">
+                    <i class="fas fa-play-circle"></i>
+                    快速入门
+                </h2>
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>性格测试</h4>
+                            <p>完成MBTI或霍兰德测试，了解自己的性格特点</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>院校预测</h4>
+                            <p>输入分数和省份，获取个性化院校推荐</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>智慧选择</h4>
+                            <p>综合分析结果，做出最适合的志愿选择</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 高考志愿填报助手. 助力每一个大学梦想.</p>
+        </div>
+    </footer>
+
+    <!-- 浮动背景元素 -->
+    <div class="floating-elements">
+        <div class="floating-element" style="--delay: 0s; --duration: 20s;"></div>
+        <div class="floating-element" style="--delay: 5s; --duration: 25s;"></div>
+        <div class="floating-element" style="--delay: 10s; --duration: 30s;"></div>
+        <div class="floating-element" style="--delay: 15s; --duration: 35s;"></div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

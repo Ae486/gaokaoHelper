@@ -168,6 +168,21 @@ public class TestController {
     }
 
     /**
+     * 获取省份映射表 - 用于前端省份ID到名称的转换
+     */
+    @GetMapping("/provinces/map")
+    public Result<Map<Integer, String>> getProvinceMap() {
+        try {
+            List<Province> provinces = provinceRepository.findAll();
+            Map<Integer, String> provinceMap = provinces.stream()
+                .collect(Collectors.toMap(Province::getId, Province::getName));
+            return Result.success("获取省份映射成功", provinceMap);
+        } catch (Exception e) {
+            return Result.error("获取省份映射失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 获取科类列表
      */
     @GetMapping("/subject-categories")

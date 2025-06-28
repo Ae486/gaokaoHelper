@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考志愿填报助手 - 功能演示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 50%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 i {
+            color: #69cee0;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            border-color: #69cee0;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(105, 206, 224, 0.2);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card.available {
+            cursor: pointer;
+        }
+
+        .card.coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-status {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .card-status.available {
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+        }
+
+        .card-status.coming-soon {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #69cee0;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .info-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .quick-link {
+            background: #69cee0;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            background: #4facfe;
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> 高考志愿填报助手</h1>
+            <p>功能演示与测试页面</p>
+        </div>
+
+        <div class="content">
+            <!-- 系统介绍 -->
+            <div class="section">
+                <h2><i class="fas fa-info-circle"></i> 系统介绍</h2>
+                <div class="info-box">
+                    <h4>🎯 项目概述</h4>
+                    <p>高考志愿填报助手是一个集成了院校预测、性格测试、智能推荐等功能的综合性平台，旨在帮助高考生科学填报志愿，做出最适合的选择。</p>
+                </div>
+                <div class="info-box">
+                    <h4>✨ 核心特色</h4>
+                    <p>• 基于历年录取数据的智能院校预测<br>
+                       • MBTI和霍兰德性格测试<br>
+                       • 个性化专业推荐<br>
+                       • 美观的用户界面和流畅的交互体验</p>
+                </div>
+            </div>
+
+            <!-- 主要功能 -->
+            <div class="section">
+                <h2><i class="fas fa-rocket"></i> 主要功能</h2>
+                <div class="cards-grid">
+                    <a href="/index.html" class="card available">
+                        <div class="card-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>用户登录</h3>
+                        <p>用户注册和登录系统，支持安全认证</p>
+                        <div class="card-status available">立即体验</div>
+                    </a>
+
+                    <a href="/main.html" class="card available">
+                        <div class="card-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3>主界面</h3>
+                        <p>美观的主界面，集成所有功能模块</p>
+                        <div class="card-status available">查看主页</div>
+                    </a>
+
+                    <a href="/recommendation-new.html" class="card available">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>院校预测</h3>
+                        <p>基于分数和位次的智能院校推荐</p>
+                        <div class="card-status available">开始预测</div>
+                    </a>
+
+                    <a href="/mbti-test.html" class="card available">
+                        <div class="card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>MBTI测试</h3>
+                        <p>16种性格类型测试，发现最适合的专业</p>
+                        <div class="card-status available">开始测试</div>
+                    </a>
+
+                    <a href="/holland-test.html" class="card available">
+                        <div class="card-icon">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <h3>霍兰德测试</h3>
+                        <p>职业兴趣测试，探索专业方向</p>
+                        <div class="card-status available">开始测试</div>
+                    </a>
+
+                    <div class="card coming-soon">
+                        <div class="card-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>AI智能助手</h3>
+                        <p>24小时在线，为您答疑解惑</p>
+                        <div class="card-status coming-soon">敬请期待</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技术特色 -->
+            <div class="section">
+                <h2><i class="fas fa-cogs"></i> 技术特色</h2>
+                <div class="info-box">
+                    <h4>🏗️ 技术架构</h4>
+                    <p><strong>后端:</strong> Spring Boot + MySQL + JPA + Spring Security<br>
+                       <strong>前端:</strong> HTML5 + CSS3 + JavaScript + GSAP动画<br>
+                       <strong>设计:</strong> 响应式设计 + 现代化UI + 流畅动画</p>
+                </div>
+                <div class="info-box">
+                    <h4>🎨 设计亮点</h4>
+                    <p>• 以#69cee0为主色调的清新配色方案<br>
+                       • GSAP动画库实现的流畅交互效果<br>
+                       • 响应式设计，完美适配各种设备<br>
+                       • 侧边栏导航，便捷的页面切换</p>
+                </div>
+            </div>
+
+            <!-- 快速链接 -->
+            <div class="section">
+                <h2><i class="fas fa-link"></i> 快速链接</h2>
+                <div class="quick-links">
+                    <a href="/index.html" class="quick-link">
+                        <i class="fas fa-sign-in-alt"></i> 登录页面
+                    </a>
+                    <a href="/main.html" class="quick-link">
+                        <i class="fas fa-home"></i> 主界面
+                    </a>
+                    <a href="/recommendation-new.html" class="quick-link">
+                        <i class="fas fa-chart-line"></i> 院校预测
+                    </a>
+                    <a href="/mbti-test.html" class="quick-link">
+                        <i class="fas fa-brain"></i> MBTI测试
+                    </a>
+                    <a href="/holland-test.html" class="quick-link">
+                        <i class="fas fa-compass"></i> 霍兰德测试
+                    </a>
+                    <a href="/swagger-ui.html" class="quick-link" target="_blank">
+                        <i class="fas fa-code"></i> API文档
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // 阻止coming-soon卡片的点击
+        document.querySelectorAll('.card.coming-soon').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('该功能正在开发中，敬请期待！');
+            });
+        });
+    </script>
+</body>
+</html>

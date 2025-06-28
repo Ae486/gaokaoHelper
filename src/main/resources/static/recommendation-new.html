@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高考志愿推荐系统</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
     <style>
         * {
@@ -114,14 +118,12 @@
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(105, 206, 224, 0.4);
         }
 
         .submit-btn:disabled {
             background: #bdc3c7;
             cursor: not-allowed;
-            transform: none;
             box-shadow: none;
         }
         
@@ -280,7 +282,6 @@
         }
 
         .school-card:hover {
-            transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(105, 206, 224, 0.2);
         }
 
@@ -375,7 +376,6 @@
         }
 
         .category-header:hover {
-            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
@@ -855,7 +855,7 @@
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label for="schoolType">学校类型（可选）</label>
+                            <label for="schoolType">学校类型</label>
                             <select id="schoolType">
                                 <option value="">不限制</option>
                                 <option value="综合">综合类</option>
@@ -888,6 +888,11 @@
         </div>
     </div>
     <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProvinceMap(); // 加载省份映射
+        });
+
         // 显示加载状态
         function showLoading() {
             document.getElementById('loadingDiv').classList.remove('hidden');
@@ -1165,16 +1170,31 @@
             }, 200);
         }
 
-        // 省份ID到名称的映射
-        const provinceMap = {
-            1: '安徽省', 2: '福建省', 3: '甘肃省', 4: '广东省', 5: '广西壮族自治区',
-            6: '上海市', 7: '贵州省', 8: '海南省', 9: '河北省', 10: '浙江省',
-            11: '河南省', 12: '黑龙江省', 13: '湖北省', 14: '湖南省', 15: '吉林省',
-            16: '江苏省', 17: '江西省', 18: '辽宁省', 19: '内蒙古自治区', 20: '北京市',
-            21: '宁夏回族自治区', 22: '青海省', 23: '山东省', 24: '山西省', 25: '陕西省',
-            26: '四川省', 27: '天津市', 28: '西藏自治区', 29: '新疆维吾尔自治区', 30: '云南省',
-            31: '重庆市'
+        // 省份ID到名称的映射 - 动态从API获取
+        let provinceMap = {
+            // 默认映射，防止API调用失败
+            1: '河南', 2: '天津', 3: '海南', 4: '江苏', 5: '陕西',
+            6: '上海', 7: '山西', 8: '江西', 9: '黑龙江', 10: '浙江',
+            11: '贵州', 12: '山东', 13: '河北', 14: '辽宁', 15: '福建',
+            16: '湖北', 17: '湖南', 18: '吉林', 19: '广东', 20: '北京',
+            21: '重庆', 22: '安徽', 23: '广西', 24: '甘肃', 25: '宁夏',
+            26: '云南', 27: '四川', 28: '内蒙古', 29: '新疆', 30: '香港',
+            31: '澳门', 32: '台湾', 33: '西藏', 34: '青海'
         };
+
+        // 从API动态加载省份映射
+        async function loadProvinceMap() {
+            try {
+                const response = await fetch('/api/test/provinces/map');
+                const result = await response.json();
+                if (result.success && result.data) {
+                    provinceMap = result.data;
+                    console.log('省份映射加载成功:', provinceMap);
+                }
+            } catch (error) {
+                console.warn('省份映射加载失败，使用默认映射:', error);
+            }
+        }
 
         // 生成学校详情内容
         function generateSchoolDetailContent(school) {
@@ -1775,5 +1795,6 @@
         }
 
     </script>
+    <script src="js/sidebar.js"></script>
 </body>
 </html>

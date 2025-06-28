@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录调试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #69cee0;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #4facfe;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 登录功能调试</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名:</label>
+                <input type="text" id="username" name="username" value="PLeiA" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码:</label>
+                <input type="password" id="password" name="password" value="123456" required>
+            </div>
+            
+            <button type="submit">测试登录</button>
+            <button type="button" onclick="testAPI()">测试API连接</button>
+            <button type="button" onclick="clearResult()">清空结果</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const resultDiv = document.getElementById('result');
+        
+        function showResult(message, type = 'info') {
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+        }
+        
+        function clearResult() {
+            resultDiv.textContent = '';
+            resultDiv.className = 'result';
+        }
+        
+        // 测试API连接
+        async function testAPI() {
+            showResult('正在测试API连接...', 'info');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'OPTIONS'
+                });
+                
+                showResult(`API连接测试结果:
+状态码: ${response.status}
+状态文本: ${response.statusText}
+Headers: ${JSON.stringify([...response.headers.entries()], null, 2)}`, 'success');
+                
+            } catch (error) {
+                showResult(`API连接失败:
+错误类型: ${error.name}
+错误信息: ${error.message}
+错误堆栈: ${error.stack}`, 'error');
+            }
+        }
+        
+        // 处理登录表单提交
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showResult('正在发送登录请求...', 'info');
+            
+            try {
+                // 显示请求详情
+                const requestData = {
+                    username: username,
+                    password: password
+                };
+                
+                showResult(`发送登录请求:
+URL: /api/auth/login
+方法: POST
+请求头: Content-Type: application/json
+请求体: ${JSON.stringify(requestData, null, 2)}
+
+正在等待响应...`, 'info');
+                
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                // 显示响应详情
+                const responseText = await response.text();
+                let result;
+                
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    showResult(`响应解析失败:
+状态码: ${response.status}
+状态文本: ${response.statusText}
+响应头: ${JSON.stringify([...response.headers.entries()], null, 2)}
+响应体(原始): ${responseText}
+解析错误: ${parseError.message}`, 'error');
+                    return;
+                }
+                
+                if (result.code === 200) {
+                    showResult(`✅ 登录成功!
+响应状态: ${response.status} ${response.statusText}
+响应数据: ${JSON.stringify(result, null, 2)}
+
+用户信息:
+- ID: ${result.data.userInfo.id}
+- 用户名: ${result.data.userInfo.username}
+- Token: ${result.data.token.substring(0, 50)}...
+
+正在保存到localStorage...`, 'success');
+                    
+                    // 保存到localStorage
+                    localStorage.setItem('token', result.data.token);
+                    localStorage.setItem('userInfo', JSON.stringify(result.data.userInfo));
+                    localStorage.setItem('username', result.data.userInfo.username);
+                    localStorage.setItem('userId', result.data.userInfo.id);
+                    
+                    setTimeout(() => {
+                        showResult(`✅ 登录成功并已保存!
+localStorage内容:
+- token: ${localStorage.getItem('token')?.substring(0, 50)}...
+- username: ${localStorage.getItem('username')}
+- userId: ${localStorage.getItem('userId')}
+
+可以手动跳转到主界面: /main.html`, 'success');
+                    }, 1000);
+                    
+                } else {
+                    showResult(`❌ 登录失败:
+响应状态: ${response.status} ${response.statusText}
+错误代码: ${result.code}
+错误信息: ${result.message}
+完整响应: ${JSON.stringify(result, null, 2)}`, 'error');
+                }
+                
+            } catch (error) {
+                showResult(`❌ 网络错误:
+错误类型: ${error.name}
+错误信息: ${error.message}
+错误堆栈: ${error.stack}
+
+请检查:
+1. 服务器是否正在运行 (http://localhost:8080)
+2. 网络连接是否正常
+3. 浏览器控制台是否有其他错误`, 'error');
+            }
+        });
+        
+        // 页面加载时显示当前状态
+        window.addEventListener('load', function() {
+            const currentToken = localStorage.getItem('token');
+            const currentUser = localStorage.getItem('username');
+            
+            if (currentToken && currentUser) {
+                showResult(`当前登录状态:
+✅ 已登录用户: ${currentUser}
+Token: ${currentToken.substring(0, 50)}...
+可以直接访问: /main.html`, 'success');
+            } else {
+                showResult('当前未登录，请测试登录功能', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

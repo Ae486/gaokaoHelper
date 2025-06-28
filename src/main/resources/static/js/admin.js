@@ -1,6 +1,46 @@
 // 管理后台JavaScript
 const API_BASE_URL = '';
 
+// 页面加载时检查权限
+document.addEventListener('DOMContentLoaded', function() {
+    checkAdminAuth();
+});
+
+// 检查管理员权限
+function checkAdminAuth() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+
+    // 检查是否登录
+    if (!token || !username) {
+        alert('请先登录！');
+        window.location.href = '/index.html';
+        return;
+    }
+
+    // 检查是否为PLeiA用户
+    if (username !== 'PLeiA') {
+        alert('您没有管理员权限！');
+        window.location.href = '/main.html';
+        return;
+    }
+
+    // 权限验证通过，初始化管理后台
+    initAdmin();
+}
+
+// 初始化管理后台
+function initAdmin() {
+    // 显示用户名
+    const userNameElement = document.querySelector('.user-name');
+    if (userNameElement) {
+        userNameElement.textContent = localStorage.getItem('username');
+    }
+
+    // 加载仪表盘数据
+    loadDashboard();
+}
+
 // 全局变量
 let currentSection = 'dashboard';
 let currentPage = {

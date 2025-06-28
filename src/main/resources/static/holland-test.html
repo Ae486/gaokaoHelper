@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍兰德职业兴趣测试 - 高考志愿填报助手</title>
+    <link rel="stylesheet" href="css/personality-test.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+    <!-- 测试介绍页面 -->
+    <div id="intro-page" class="page active">
+        <div class="container intro-container">
+            <div class="header holland-header">
+                <i class="fas fa-compass"></i>
+                <h1>霍兰德职业兴趣测试</h1>
+                <p>探索你的职业兴趣，发现最适合的专业领域</p>
+            </div>
+            
+            <div class="content">
+                <div class="test-info">
+                    <div class="info-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>测试时长</h3>
+                        <p>约8-12分钟</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-list"></i>
+                        <h3>题目数量</h3>
+                        <p>60道题目</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>兴趣类型</h3>
+                        <p>6种职业兴趣</p>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> 测试说明</h3>
+                    <ul>
+                        <li>请根据你的真实兴趣和偏好作答</li>
+                        <li>选择"是"表示你喜欢或感兴趣</li>
+                        <li>选择"否"表示你不喜欢或不感兴趣</li>
+                        <li>测试结果将显示你的职业兴趣代码</li>
+                    </ul>
+                </div>
+
+                <div class="holland-types">
+                    <h3><i class="fas fa-users"></i> 霍兰德六种类型</h3>
+                    <div class="types-grid">
+                        <div class="type-card realistic">
+                            <span class="type-label">R</span>
+                            <span class="type-name">现实型</span>
+                            <span class="type-desc">喜欢动手操作</span>
+                        </div>
+                        <div class="type-card investigative">
+                            <span class="type-label">I</span>
+                            <span class="type-name">研究型</span>
+                            <span class="type-desc">喜欢思考分析</span>
+                        </div>
+                        <div class="type-card artistic">
+                            <span class="type-label">A</span>
+                            <span class="type-name">艺术型</span>
+                            <span class="type-desc">喜欢创作表达</span>
+                        </div>
+                        <div class="type-card social">
+                            <span class="type-label">S</span>
+                            <span class="type-name">社会型</span>
+                            <span class="type-desc">喜欢帮助他人</span>
+                        </div>
+                        <div class="type-card enterprising">
+                            <span class="type-label">E</span>
+                            <span class="type-name">企业型</span>
+                            <span class="type-desc">喜欢领导管理</span>
+                        </div>
+                        <div class="type-card conventional">
+                            <span class="type-label">C</span>
+                            <span class="type-name">常规型</span>
+                            <span class="type-desc">喜欢规范秩序</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="start-btn holland-btn" onclick="startTest()">
+                    <i class="fas fa-play"></i>
+                    开始测试
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 测试进行页面 -->
+    <div id="test-page" class="page">
+        <div class="container test-container">
+            <div class="test-header">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill holland-progress" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">1 / 60</span>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+
+            <div class="question-container">
+                <div class="question-number" id="question-number">第 1 题</div>
+                <div class="question-text" id="question-text">题目内容将在这里显示</div>
+                
+                <div class="options-container holland-options">
+                    <button class="option-btn holland-option yes-option" id="option-yes" onclick="selectOption('YES')">
+                        <span class="option-icon"><i class="fas fa-thumbs-up"></i></span>
+                        <span class="option-text">是，我喜欢</span>
+                    </button>
+                    <button class="option-btn holland-option no-option" id="option-no" onclick="selectOption('NO')">
+                        <span class="option-icon"><i class="fas fa-thumbs-down"></i></span>
+                        <span class="option-text">否，我不喜欢</span>
+                    </button>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="nav-btn prev-btn" id="prev-btn" onclick="previousQuestion()" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                        上一题
+                    </button>
+                    <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()" disabled>
+                        下一题
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载页面 -->
+    <div id="loading-page" class="page">
+        <div class="container loading-container">
+            <div class="loading-content">
+                <div class="loading-spinner">
+                    <i class="fas fa-compass fa-spin"></i>
+                </div>
+                <h2>正在分析你的职业兴趣...</h2>
+                <p>请稍候，我们正在为你生成个性化的兴趣报告</p>
+                <div class="loading-progress">
+                    <div class="loading-bar">
+                        <div class="loading-fill holland-loading" id="loading-fill"></div>
+                    </div>
+                    <span id="loading-text">分析中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果页面 -->
+    <div id="result-page" class="page">
+        <div class="container result-container">
+            <div class="result-header holland-result">
+                <div class="holland-code" id="holland-code">RIA</div>
+                <div class="code-description" id="code-description">现实型-研究型-艺术型</div>
+                <div class="type-summary" id="type-summary">你喜欢动手操作、独立思考，同时具有一定的创造力</div>
+            </div>
+
+            <div class="result-content">
+                <div class="interest-chart">
+                    <h3><i class="fas fa-chart-radar"></i> 兴趣分析</h3>
+                    <div class="radar-chart" id="radar-chart">
+                        <!-- 雷达图将在这里生成 -->
+                    </div>
+                </div>
+
+                <div class="recommended-majors">
+                    <h3><i class="fas fa-graduation-cap"></i> 推荐专业</h3>
+                    <div class="majors-list" id="majors-list">
+                        <!-- 推荐专业列表将在这里生成 -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn secondary" onclick="retakeTest()">
+                        <i class="fas fa-redo"></i>
+                        重新测试
+                    </button>
+                    <button class="action-btn primary holland-btn" onclick="viewDetailedReport()">
+                        <i class="fas fa-file-alt"></i>
+                        查看详细报告
+                    </button>
+                    <button class="action-btn primary holland-btn" onclick="goToRecommendation()">
+                        <i class="fas fa-search"></i>
+                        志愿推荐
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/holland-test.js"></script>
+</body>
+</html>

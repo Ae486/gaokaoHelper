@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .antMatchers("/api/admission-score/**").permitAll()
                 .antMatchers("/api/recommendation/**").permitAll()
                 .antMatchers("/api/recommendations/**").permitAll()
+                .antMatchers("/api/personality-test/**").permitAll()
 
                 // 管理员接口 - 需要认证，权限在切面中验证
                 .antMatchers("/api/admin/**").authenticated()

@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Microsoft YaHei', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -38,7 +38,7 @@ body {
 
 /* 头部样式 */
 .header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
     color: white;
     text-align: center;
     padding: 30px 20px;
@@ -98,9 +98,9 @@ body {
 
 .input-group input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #69cee0;
     background-color: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(105, 206, 224, 0.1);
 }
 
 .input-group input:invalid {
@@ -214,13 +214,13 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(105, 206, 224, 0.4);
 }
 
 .btn-secondary {
@@ -260,7 +260,7 @@ body {
 }
 
 .switch-form a {
-    color: #667eea;
+    color: #69cee0;
     text-decoration: none;
     font-weight: 600;
 }
