@@ -127,6 +127,63 @@ public interface AdmissionScoreRepository extends JpaRepository<AdmissionScore, 
                                        @Param("maxRank") Integer maxRank);
 
     /**
+     * 根据学校ID和省份ID查找录取分数记录
+     *
+     * @param schoolId 学校ID
+     * @param provinceId 省份ID
+     * @return 录取分数记录列表
+     */
+    List<AdmissionScore> findBySchoolIdAndProvinceId(Integer schoolId, Integer provinceId);
+
+    /**
+     * 根据学校ID和年份范围查找录取分数记录
+     *
+     * @param schoolId 学校ID
+     * @param startYear 开始年份
+     * @param endYear 结束年份
+     * @return 录取分数记录列表
+     */
+    List<AdmissionScore> findBySchoolIdAndYearBetween(Integer schoolId, Integer startYear, Integer endYear);
+
+    /**
+     * 根据学校ID、省份ID和年份范围查找录取分数记录
+     *
+     * @param schoolId 学校ID
+     * @param provinceId 省份ID
+     * @param startYear 开始年份
+     * @param endYear 结束年份
+     * @return 录取分数记录列表
+     */
+    List<AdmissionScore> findBySchoolIdAndProvinceIdAndYearBetween(Integer schoolId, Integer provinceId,
+                                                                  Integer startYear, Integer endYear);
+
+    /**
+     * 根据学校ID、省份ID、科类ID和年份范围查找录取分数记录
+     *
+     * @param schoolId 学校ID
+     * @param provinceId 省份ID
+     * @param subjectCategoryId 科类ID
+     * @param startYear 开始年份
+     * @param endYear 结束年份
+     * @return 录取分数记录列表
+     */
+    List<AdmissionScore> findBySchoolIdAndProvinceIdAndSubjectCategoryIdAndYearBetween(
+            Integer schoolId, Integer provinceId, Integer subjectCategoryId,
+            Integer startYear, Integer endYear);
+
+    /**
+     * 根据省份ID、科类ID和年份查找录取分数记录
+     *
+     * @param provinceId 省份ID
+     * @param subjectCategoryId 科类ID
+     * @param year 年份
+     * @return 录取分数记录列表
+     */
+    List<AdmissionScore> findByProvinceIdAndSubjectCategoryIdAndYear(Integer provinceId,
+                                                                    Integer subjectCategoryId,
+                                                                    Integer year);
+
+    /**
      * 根据年份、省份ID和科类ID查找同分录取记录
      *
      * @param year 年份

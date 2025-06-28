@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录取分数查询功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+        .flex-item {
+            flex: 1;
+        }
+        .info-box {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 录取分数查询功能测试</h1>
+
+    <div class="info-box">
+        <strong>📋 测试说明：</strong><br>
+        • 学校ID示例：1-清华大学, 2-北京大学, 3-复旦大学等<br>
+        • 省份ID示例：1-河南省, 22-安徽省等<br>
+        • 科类ID示例：1-物理组, 2-历史组, 3-文科, 4-理科<br>
+        • 年份范围：2020-2024
+    </div>
+
+    <div class="flex-container">
+        <!-- 历年录取分数查询 -->
+        <div class="flex-item">
+            <div class="container">
+                <h2>1. 历年录取分数查询</h2>
+                <form id="historicalForm">
+                    <div class="form-group">
+                        <label for="hist_school">学校ID:</label>
+                        <input type="number" id="hist_school" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hist_province">省份ID（可选）:</label>
+                        <input type="number" id="hist_province" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="hist_subject">科类ID（可选）:</label>
+                        <input type="number" id="hist_subject" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="hist_start_year">开始年份（可选）:</label>
+                        <input type="number" id="hist_start_year" value="2020" min="2020" max="2024">
+                    </div>
+                    <div class="form-group">
+                        <label for="hist_end_year">结束年份（可选）:</label>
+                        <input type="number" id="hist_end_year" value="2024" min="2020" max="2024">
+                    </div>
+                    <button type="submit">查询历年录取分数</button>
+                </form>
+                <div id="historicalResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- 专业录取分数查询 -->
+        <div class="flex-item">
+            <div class="container">
+                <h2>2. 专业录取分数查询</h2>
+                <form id="majorForm">
+                    <div class="form-group">
+                        <label for="major_school">学校ID:</label>
+                        <input type="number" id="major_school" value="2" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="major_province">省份ID（可选）:</label>
+                        <input type="number" id="major_province" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="major_subject">科类ID（可选）:</label>
+                        <input type="number" id="major_subject" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="major_start_year">开始年份（可选）:</label>
+                        <input type="number" id="major_start_year" value="2022" min="2020" max="2024">
+                    </div>
+                    <div class="form-group">
+                        <label for="major_end_year">结束年份（可选）:</label>
+                        <input type="number" id="major_end_year" value="2024" min="2020" max="2024">
+                    </div>
+                    <button type="submit">查询专业录取分数</button>
+                </form>
+                <div id="majorResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分数趋势分析 -->
+    <div class="container">
+        <h2>3. 分数趋势分析</h2>
+        <div class="flex-container">
+            <div class="flex-item">
+                <form id="trendForm">
+                    <div class="form-group">
+                        <label for="trend_school">学校ID:</label>
+                        <input type="number" id="trend_school" value="3" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="trend_province">省份ID:</label>
+                        <input type="number" id="trend_province" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="trend_subject">科类ID:</label>
+                        <input type="number" id="trend_subject" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="trend_year_count">分析年份数:</label>
+                        <input type="number" id="trend_year_count" value="5" min="2" max="10">
+                    </div>
+                    <button type="submit">分析分数趋势</button>
+                </form>
+            </div>
+            <div class="flex-item">
+                <div id="trendResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API基础URL
+        const API_BASE = '/api/admission-score';
+
+        // 通用请求函数
+        async function makeRequest(url, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                console.log('发送请求:', method, url, data);
+                const response = await fetch(url, options);
+                const result = await response.json();
+                console.log('响应结果:', result);
+                return result;
+            } catch (error) {
+                console.error('请求错误:', error);
+                return { code: 500, message: '请求失败: ' + error.message };
+            }
+        }
+
+        // 显示结果
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            
+            if (result.code === 200) {
+                element.className = 'result success';
+                element.textContent = JSON.stringify(result, null, 2);
+            } else {
+                element.className = 'result error';
+                element.textContent = `错误 ${result.code}: ${result.message}`;
+            }
+        }
+
+        // 历年录取分数查询
+        document.getElementById('historicalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                schoolId: parseInt(document.getElementById('hist_school').value)
+            };
+            
+            const province = document.getElementById('hist_province').value;
+            const subject = document.getElementById('hist_subject').value;
+            const startYear = document.getElementById('hist_start_year').value;
+            const endYear = document.getElementById('hist_end_year').value;
+            
+            if (province) data.provinceId = parseInt(province);
+            if (subject) data.subjectCategoryId = parseInt(subject);
+            if (startYear) data.startYear = parseInt(startYear);
+            if (endYear) data.endYear = parseInt(endYear);
+            
+            const result = await makeRequest(`${API_BASE}/historical`, 'POST', data);
+            showResult('historicalResult', result);
+        });
+
+        // 专业录取分数查询
+        document.getElementById('majorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                schoolId: parseInt(document.getElementById('major_school').value)
+            };
+            
+            const province = document.getElementById('major_province').value;
+            const subject = document.getElementById('major_subject').value;
+            const startYear = document.getElementById('major_start_year').value;
+            const endYear = document.getElementById('major_end_year').value;
+            
+            if (province) data.provinceId = parseInt(province);
+            if (subject) data.subjectCategoryId = parseInt(subject);
+            if (startYear) data.startYear = parseInt(startYear);
+            if (endYear) data.endYear = parseInt(endYear);
+            
+            const result = await makeRequest(`${API_BASE}/by-major`, 'POST', data);
+            showResult('majorResult', result);
+        });
+
+        // 分数趋势分析
+        document.getElementById('trendForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                schoolId: parseInt(document.getElementById('trend_school').value),
+                provinceId: parseInt(document.getElementById('trend_province').value),
+                subjectCategoryId: parseInt(document.getElementById('trend_subject').value),
+                yearCount: parseInt(document.getElementById('trend_year_count').value)
+            };
+            
+            const result = await makeRequest(`${API_BASE}/trend-analysis`, 'POST', data);
+            showResult('trendResult', result);
+        });
+    </script>
+</body>
+</html>

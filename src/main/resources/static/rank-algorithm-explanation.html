@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于位次的录取概率算法说明</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .algorithm-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .example-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .risk-high { background-color: #ffebee; }
+        .risk-medium { background-color: #fff3e0; }
+        .risk-low { background-color: #e8f5e8; }
+        .formula {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            font-family: monospace;
+            text-align: center;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            flex: 1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .old-method {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        .new-method {
+            background-color: #e8f5e8;
+            border-left: 4px solid #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 基于位次的录取概率算法说明</h1>
+        
+        <div class="highlight">
+            <strong>核心理念：</strong>位次比分数更准确！即使你考了700分，但如果有10000个人考了701分，你也可能被挤出录取线。
+        </div>
+
+        <h2>📊 算法核心逻辑</h2>
+        
+        <div class="algorithm-box">
+            <h3>位次差距计算公式</h3>
+            <div class="formula">
+                位次差距 = 用户位次 - 学校历年最低录取位次
+            </div>
+            <p><strong>注意：</strong>位次越小越好，负值表示用户位次更优秀</p>
+        </div>
+
+        <h2>🎯 录取概率分级表</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>位次差距范围</th>
+                    <th>录取概率</th>
+                    <th>风险等级</th>
+                    <th>说明</th>
+                    <th>建议</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="risk-low">
+                    <td>≤ -5000名</td>
+                    <td>95%</td>
+                    <td>极低风险</td>
+                    <td>位次优势巨大</td>
+                    <td>稳妥保底选择</td>
+                </tr>
+                <tr class="risk-low">
+                    <td>-5000 ~ -2000名</td>
+                    <td>85%</td>
+                    <td>低风险</td>
+                    <td>位次优势明显</td>
+                    <td>保底选择</td>
+                </tr>
+                <tr class="risk-low">
+                    <td>-2000 ~ -500名</td>
+                    <td>75%</td>
+                    <td>低风险</td>
+                    <td>位次有一定优势</td>
+                    <td>稳妥选择</td>
+                </tr>
+                <tr class="risk-medium">
+                    <td>-500 ~ 0名</td>
+                    <td>65%</td>
+                    <td>中等风险</td>
+                    <td>位次刚好达线</td>
+                    <td>稳妥选择</td>
+                </tr>
+                <tr class="risk-medium">
+                    <td>0 ~ 1000名</td>
+                    <td>45%</td>
+                    <td>中高风险</td>
+                    <td>位次略有不足</td>
+                    <td>冲刺选择</td>
+                </tr>
+                <tr class="risk-high">
+                    <td>1000 ~ 3000名</td>
+                    <td>25%</td>
+                    <td>高风险</td>
+                    <td>位次差距较大</td>
+                    <td>冲刺选择</td>
+                </tr>
+                <tr class="risk-high">
+                    <td>3000 ~ 5000名</td>
+                    <td>15%</td>
+                    <td>高风险</td>
+                    <td>位次差距很大</td>
+                    <td>冲刺选择</td>
+                </tr>
+                <tr class="risk-high">
+                    <td>> 5000名</td>
+                    <td>5%</td>
+                    <td>极高风险</td>
+                    <td>位次差距巨大</td>
+                    <td>不建议填报</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>📈 实际案例分析</h2>
+        
+        <div class="example-box">
+            <h3>案例：河南理科考生，位次25000名</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>学校</th>
+                        <th>历年最低位次</th>
+                        <th>位次差距</th>
+                        <th>录取概率</th>
+                        <th>推荐类型</th>
+                        <th>分析</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="risk-low">
+                        <td>郑州大学</td>
+                        <td>30000名</td>
+                        <td>-5000名</td>
+                        <td>85%</td>
+                        <td>保底</td>
+                        <td>位次优势明显，录取把握大</td>
+                    </tr>
+                    <tr class="risk-medium">
+                        <td>华中科技大学</td>
+                        <td>24500名</td>
+                        <td>+500名</td>
+                        <td>65%</td>
+                        <td>稳妥</td>
+                        <td>位次接近，有一定录取希望</td>
+                    </tr>
+                    <tr class="risk-high">
+                        <td>西安交通大学</td>
+                        <td>22000名</td>
+                        <td>+3000名</td>
+                        <td>25%</td>
+                        <td>冲刺</td>
+                        <td>位次不足，可以冲刺但风险大</td>
+                    </tr>
+                    <tr class="risk-high">
+                        <td>清华大学</td>
+                        <td>500名</td>
+                        <td>+24500名</td>
+                        <td>5%</td>
+                        <td>不建议</td>
+                        <td>位次差距过大，不建议填报</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>🔄 算法优化对比</h2>
+        
+        <div class="comparison">
+            <div class="comparison-item old-method">
+                <h3>❌ 旧方法：基于分数</h3>
+                <ul>
+                    <li>只看分数差距</li>
+                    <li>忽略考生竞争激烈程度</li>
+                    <li>不考虑分数分布</li>
+                    <li>容易误判录取概率</li>
+                </ul>
+                <p><strong>问题：</strong>700分vs701分看起来差1分，但可能位次差几千名</p>
+            </div>
+            
+            <div class="comparison-item new-method">
+                <h3>✅ 新方法：基于位次</h3>
+                <ul>
+                    <li>直接反映竞争激烈程度</li>
+                    <li>考虑考生分布密度</li>
+                    <li>更准确的录取预测</li>
+                    <li>符合高校录取实际</li>
+                </ul>
+                <p><strong>优势：</strong>位次直接对应录取名额，更加精准</p>
+            </div>
+        </div>
+
+        <h2>🎯 为什么位次更准确？</h2>
+        
+        <div class="algorithm-box">
+            <h3>高考录取的本质</h3>
+            <p>高校录取本质上是<strong>按位次录取</strong>，而不是按分数录取：</p>
+            <ul>
+                <li><strong>招生计划固定：</strong>每个学校每年招生人数基本固定</li>
+                <li><strong>位次对应名额：</strong>位次直接对应录取名额</li>
+                <li><strong>分数会波动：</strong>每年试题难度不同，分数会波动</li>
+                <li><strong>位次相对稳定：</strong>位次反映的是相对排名，更稳定</li>
+            </ul>
+        </div>
+
+        <div class="example-box">
+            <h3>举例说明</h3>
+            <p><strong>某大学在河南招100人：</strong></p>
+            <ul>
+                <li>2023年：最低分650分，对应位次25000名</li>
+                <li>2024年：最低分630分，对应位次24800名</li>
+            </ul>
+            <p><strong>分析：</strong>虽然分数降了20分，但位次基本稳定，说明录取难度没变</p>
+        </div>
+
+        <h2>⚙️ 算法实现细节</h2>
+        
+        <div class="algorithm-box">
+            <h3>双重保障机制</h3>
+            <ol>
+                <li><strong>优先使用位次：</strong>如果有位次数据，优先基于位次计算</li>
+                <li><strong>分数作为备选：</strong>如果没有位次数据，使用分数计算</li>
+                <li><strong>智能降级：</strong>确保在任何情况下都能给出合理建议</li>
+            </ol>
+        </div>
+
+        <div class="highlight">
+            <strong>💡 使用建议：</strong>
+            <ul>
+                <li>重点关注位次差距，而不是分数差距</li>
+                <li>保底学校选择位次优势明显的</li>
+                <li>冲刺学校可以选择位次略有不足的</li>
+                <li>稳妥学校选择位次接近的</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

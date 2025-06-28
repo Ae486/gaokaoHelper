@@ -5,6 +5,7 @@ import com.gaokao.helper.entity.*;
 import com.gaokao.helper.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 测试控制器
@@ -153,6 +155,32 @@ public class TestController {
     }
 
     /**
+     * 获取省份列表
+     */
+    @GetMapping("/provinces")
+    public Result<List<Province>> getProvinces() {
+        try {
+            List<Province> provinces = provinceRepository.findAll();
+            return Result.success("获取省份列表成功", provinces);
+        } catch (Exception e) {
+            return Result.error("获取省份列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取科类列表
+     */
+    @GetMapping("/subject-categories")
+    public Result<List<SubjectCategory>> getSubjectCategories() {
+        try {
+            List<SubjectCategory> categories = subjectCategoryRepository.findAll();
+            return Result.success("获取科类列表成功", categories);
+        } catch (Exception e) {
+            return Result.error("获取科类列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 测试数据完整性
      */
     @GetMapping("/data/integrity")
@@ -181,6 +209,86 @@ public class TestController {
             return Result.success("数据完整性检查", data);
         } catch (Exception e) {
             return Result.error("数据完整性检查失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试获取学校详细信息
+     */
+    @GetMapping("/school/{id}")
+    public Result<School> getSchoolById(@PathVariable Integer id) {
+        try {
+            Optional<School> school = schoolRepository.findById(id);
+            if (school.isPresent()) {
+                return Result.success("获取学校信息成功", school.get());
+            } else {
+                return Result.error("学校不存在，ID: " + id);
+            }
+        } catch (Exception e) {
+            return Result.error("获取学校信息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试获取第一所学校的详细信息
+     */
+    @GetMapping("/school/first")
+    public Result<School> getFirstSchool() {
+        try {
+            List<School> schools = schoolRepository.findAll();
+            if (!schools.isEmpty()) {
+                return Result.success("获取第一所学校信息成功", schools.get(0));
+            } else {
+                return Result.error("没有学校数据");
+            }
+        } catch (Exception e) {
+            return Result.error("获取学校信息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 测试获取前10所学校的详细信息
+     */
+    @GetMapping("/schools/sample")
+    public Result<List<School>> getSampleSchools() {
+        try {
+            List<School> schools = schoolRepository.findAll().stream().limit(10).collect(Collectors.toList());
+            return Result.success("获取示例学校信息成功", schools);
+        } catch (Exception e) {
+            return Result.error("获取学校信息失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据学校名称搜索学校信息
+     */
+    @GetMapping("/school/search/{name}")
+    public Result<School> getSchoolByName(@PathVariable String name) {
+        try {
+            Optional<School> school = schoolRepository.findByName(name);
+            if (school.isPresent()) {
+                return Result.success("找到学校信息", school.get());
+            } else {
+                return Result.error("未找到学校: " + name);
+            }
+        } catch (Exception e) {
+            return Result.error("搜索学校失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 模糊搜索学校名称
+     */
+    @GetMapping("/schools/search/{keyword}")
+    public Result<List<School>> searchSchoolsByKeyword(@PathVariable String keyword) {
+        try {
+            List<School> schools = schoolRepository.findAll().stream()
+                    .filter(school -> school.getName().contains(keyword))
+                    .limit(10)
+                    .collect(Collectors.toList());
+            return Result.success("搜索结果", schools);
+        } catch (Exception e) {
+            return Result.error("搜索失败: " + e.getMessage());
         }
     }
 }

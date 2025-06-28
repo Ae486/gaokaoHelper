@@ -65,6 +65,10 @@ public class SecurityConfig {
                 // 公开接口
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/api/score-ranking/**").permitAll()
+                .antMatchers("/api/admission-score/**").permitAll()
+                .antMatchers("/api/recommendation/**").permitAll()
+                .antMatchers("/api/recommendations/**").permitAll()
 
                 // 管理员接口 - 需要认证，权限在切面中验证
                 .antMatchers("/api/admin/**").authenticated()
@@ -89,6 +93,9 @@ public class SecurityConfig {
                 .antMatchers("/").permitAll()
                 .antMatchers("/index.html").permitAll()
                 .antMatchers("/admin.html").permitAll()
+                .antMatchers("/login-test.html").permitAll()
+                .antMatchers("/score-ranking-test.html").permitAll()
+                .antMatchers("/*.html").permitAll()
 
                 // 其他所有请求需要认证
                 .anyRequest().authenticated()
