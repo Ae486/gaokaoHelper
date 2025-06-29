@@ -10,7 +10,7 @@
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
     z-index: 2000;
     transition: all 0.3s ease;
-    overflow-y: auto;
+    overflow: hidden; /* 完全禁用滚动 */
 }
 
 .sidebar.active {

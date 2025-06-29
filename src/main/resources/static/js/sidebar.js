@@ -74,10 +74,10 @@ class Sidebar {
 
                     <div class="menu-section">
                         <div class="menu-title">更多功能</div>
-                        <a href="#" class="menu-item disabled" data-page="ai-assistant">
+                        <a href="ai-chat-test.html" class="menu-item" data-page="ai-chat-test">
                             <i class="fas fa-robot"></i>
                             <span class="menu-text">AI助手</span>
-                            <span class="menu-badge coming-soon">敬请期待</span>
+                            <span class="menu-badge">热门</span>
                         </a>
                         <a href="#" class="menu-item disabled" data-page="school-pk">
                             <i class="fas fa-balance-scale"></i>
@@ -168,8 +168,8 @@ class Sidebar {
             });
         });
 
-        // 禁用的菜单项点击提示
-        document.querySelectorAll('.menu-item.disabled').forEach(item => {
+        // 禁用的菜单项点击提示（排除AI助手）
+        document.querySelectorAll('.menu-item.disabled:not([data-page="ai-chat-test"])').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.showComingSoonMessage();

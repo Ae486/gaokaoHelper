@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI集成测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 AI集成测试</h1>
+        <p>测试AI对话功能与登录系统的集成</p>
+        
+        <div id="status"></div>
+        
+        <div>
+            <button onclick="testLoginStatus()">检查登录状态</button>
+            <button onclick="testLocalStorage()">检查本地存储</button>
+            <button onclick="simulateLogin()">模拟登录</button>
+            <button onclick="testAIPage()">测试AI页面跳转</button>
+            <button onclick="clearStorage()">清除存储</button>
+        </div>
+        
+        <div class="container">
+            <h3>测试日志</h3>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function testLoginStatus() {
+            log('开始检查登录状态...');
+            
+            const token = localStorage.getItem('token');
+            const userInfo = localStorage.getItem('userInfo');
+            const username = localStorage.getItem('username');
+            
+            if (token && userInfo && username) {
+                try {
+                    const userData = JSON.parse(userInfo);
+                    log(`✅ 用户已登录: ${username}`);
+                    log(`Token: ${token.substring(0, 20)}...`);
+                    log(`用户信息: ${JSON.stringify(userData, null, 2)}`);
+                    showStatus('用户已登录', 'success');
+                } catch (error) {
+                    log(`❌ 用户信息解析失败: ${error.message}`);
+                    showStatus('用户信息损坏', 'error');
+                }
+            } else {
+                log('❌ 用户未登录');
+                showStatus('用户未登录', 'error');
+            }
+        }
+
+        function testLocalStorage() {
+            log('检查localStorage内容...');
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                log(`${key}: ${value}`);
+            }
+        }
+
+        function simulateLogin() {
+            log('模拟登录过程...');
+            
+            const mockToken = 'mock_token_' + Date.now();
+            const mockUserInfo = {
+                id: 1,
+                username: 'testuser',
+                email: 'test@example.com'
+            };
+            
+            localStorage.setItem('token', mockToken);
+            localStorage.setItem('userInfo', JSON.stringify(mockUserInfo));
+            localStorage.setItem('username', mockUserInfo.username);
+            localStorage.setItem('userId', mockUserInfo.id);
+            
+            log('✅ 模拟登录完成');
+            showStatus('模拟登录成功', 'success');
+        }
+
+        function testAIPage() {
+            log('测试AI页面跳转...');
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('❌ 未登录，无法访问AI页面');
+                showStatus('请先登录', 'error');
+                return;
+            }
+            
+            log('✅ 有登录信息，准备跳转到AI页面');
+            showStatus('准备跳转到AI页面', 'info');
+            
+            setTimeout(() => {
+                window.open('/ai-chat-test.html', '_blank');
+            }, 1000);
+        }
+
+        function clearStorage() {
+            log('清除本地存储...');
+            localStorage.clear();
+            log('✅ 本地存储已清除');
+            showStatus('本地存储已清除', 'info');
+        }
+
+        // 页面加载时自动检查状态
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 AI集成测试页面已加载');
+            testLoginStatus();
+        });
+    </script>
+</body>
+</html>

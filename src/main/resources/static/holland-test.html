@@ -198,6 +198,49 @@
         </div>
     </div>
 
+    <!-- 详细报告弹窗 -->
+    <div id="report-modal" class="report-modal" style="display: none;">
+        <div class="report-modal-content">
+            <div class="report-modal-header">
+                <h2>详细测试报告</h2>
+                <button class="close-btn" onclick="hideReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="report-modal-body">
+                <!-- 加载状态 -->
+                <div id="report-loading" class="report-loading">
+                    <div class="loading-spinner">
+                        <i class="fas fa-brain fa-spin"></i>
+                    </div>
+                    <h3>AI正在为你生成详细报告...</h3>
+                    <p>请稍候，这可能需要几秒钟时间</p>
+                </div>
+
+                <!-- 报告内容 -->
+                <div id="report-content" class="report-content" style="display: none;">
+                    <!-- AI生成的报告内容将在这里显示 -->
+                </div>
+
+                <!-- 错误状态 -->
+                <div id="report-error" class="report-error" style="display: none;">
+                    <!-- 错误信息将在这里显示 -->
+                </div>
+            </div>
+
+            <div class="report-modal-footer">
+                <button class="action-btn secondary" onclick="hideReportModal()">
+                    关闭
+                </button>
+                <button class="action-btn primary" onclick="window.print()">
+                    <i class="fas fa-print"></i>
+                    打印报告
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/sidebar.js"></script>
     <script src="js/holland-test.js"></script>
 </body>

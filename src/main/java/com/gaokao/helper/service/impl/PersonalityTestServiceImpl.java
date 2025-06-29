@@ -30,6 +30,8 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
     private final HollandQuestionRepository hollandQuestionRepository;
     private final MajorRepository majorRepository;
     private final PersonalityTestRecordRepository testRecordRepository;
+    private final MbtiDescriptionRepository mbtiDescriptionRepository;
+    private final MbtiMajorMappingRepository mbtiMajorMappingRepository;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -179,10 +181,13 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
         });
         response.setDimensionPercentages(percentages);
 
-        // TODO: 添加类型描述和推荐专业
-        response.setTypeName("类型名称");
-        response.setTypeDescription("类型描述");
-        response.setRecommendedMajors(new ArrayList<>());
+        // 设置MBTI类型描述
+        setMbtiTypeDescription(response, mbtiType);
+
+        // 设置推荐专业
+        setRecommendedMajors(response, mbtiType);
+
+        // 设置性格特征
         response.setPersonalityTraits(new TestResultResponse.PersonalityTraits());
 
         return response;
@@ -203,9 +208,9 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
         });
         response.setDimensionPercentages(percentages);
 
-        // TODO: 添加类型描述和推荐专业
-        response.setTypeName("类型名称");
-        response.setTypeDescription("类型描述");
+        // TODO: 添加霍兰德类型描述和推荐专业
+        response.setTypeName("职业类型");
+        response.setTypeDescription("正在分析你的职业兴趣特征...");
         response.setRecommendedMajors(new ArrayList<>());
         response.setPersonalityTraits(new TestResultResponse.PersonalityTraits());
 
@@ -222,5 +227,79 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
     public List<TestResultResponse> getUserTestHistory(Integer userId) {
         // TODO: 实现获取用户测试历史
         return new ArrayList<>();
+    }
+
+    /**
+     * 设置MBTI类型描述信息
+     */
+    private void setMbtiTypeDescription(TestResultResponse response, String mbtiType) {
+        try {
+            Optional<MbtiDescription> descriptionOpt = mbtiDescriptionRepository.findByMbtiType(mbtiType);
+            if (descriptionOpt.isPresent()) {
+                MbtiDescription description = descriptionOpt.get();
+                response.setTypeName(description.getTypeName());
+                response.setTypeDescription(description.getDescription());
+
+                // 设置性格特征
+                TestResultResponse.PersonalityTraits traits = new TestResultResponse.PersonalityTraits();
+                traits.setStrengths(description.getStrengths());
+                traits.setWeaknesses(description.getWeaknesses());
+                traits.setFamousPeople(description.getFamousPeople());
+                traits.setSuitableCareers(description.getSuitableCareers());
+                traits.setCharacteristics(description.getDescription());
+                response.setPersonalityTraits(traits);
+            } else {
+                // 如果没有找到描述，设置默认值
+                response.setTypeName("性格类型");
+                response.setTypeDescription("正在分析你的性格特征...");
+                log.warn("未找到MBTI类型 {} 的描述信息", mbtiType);
+            }
+        } catch (Exception e) {
+            log.error("设置MBTI类型描述时发生错误: {}", e.getMessage(), e);
+            response.setTypeName("性格类型");
+            response.setTypeDescription("正在分析你的性格特征...");
+        }
+    }
+
+    /**
+     * 设置推荐专业信息
+     */
+    private void setRecommendedMajors(TestResultResponse response, String mbtiType) {
+        try {
+            List<MbtiMajorMapping> mappings = mbtiMajorMappingRepository.findByMbtiTypeOrderByMatchScoreDesc(mbtiType);
+
+            List<TestResultResponse.RecommendedMajor> recommendedMajors = new ArrayList<>();
+
+            // 取前5个匹配度最高的专业
+            int limit = Math.min(5, mappings.size());
+            for (int i = 0; i < limit; i++) {
+                MbtiMajorMapping mapping = mappings.get(i);
+
+                // 获取专业详细信息
+                Optional<Major> majorOpt = majorRepository.findById(mapping.getMajorId());
+                if (majorOpt.isPresent()) {
+                    Major major = majorOpt.get();
+
+                    TestResultResponse.RecommendedMajor recommendedMajor = new TestResultResponse.RecommendedMajor();
+                    recommendedMajor.setMajorId(major.getId());
+                    recommendedMajor.setMajorName(major.getMajorName());
+                    recommendedMajor.setCategory(major.getCategory());
+                    recommendedMajor.setMatchScore(mapping.getMatchScore());
+                    recommendedMajor.setReason(mapping.getReason());
+                    recommendedMajor.setCareerProspects(major.getCareerProspects());
+
+                    recommendedMajors.add(recommendedMajor);
+                }
+            }
+
+            response.setRecommendedMajors(recommendedMajors);
+
+            if (recommendedMajors.isEmpty()) {
+                log.warn("未找到MBTI类型 {} 的专业匹配信息", mbtiType);
+            }
+        } catch (Exception e) {
+            log.error("设置推荐专业时发生错误: {}", e.getMessage(), e);
+            response.setRecommendedMajors(new ArrayList<>());
+        }
     }
 }

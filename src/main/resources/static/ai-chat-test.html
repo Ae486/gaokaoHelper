@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI对话助手测试</title>
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 50%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: linear-gradient(to bottom, #f8fbff 0%, #ffffff 100%);
+            position: relative;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #69cee0;
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 4px 12px rgba(105, 206, 224, 0.3);
+        }
+
+        .ai-message .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e8f4f8;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin: 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #69cee0, #4facfe);
+            color: white;
+            order: 1;
+        }
+
+        .ai-avatar {
+            background: url('images/ai-avatar.png') center/cover no-repeat;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #69cee0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 备用样式：如果图片加载失败 */
+        .ai-avatar::before {
+            content: 'AI';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: -1;
+        }
+
+        /* 当图片加载成功时，备用样式会被覆盖 */
+        .ai-avatar.loaded::before {
+            display: none;
+        }
+
+        /* 思考指示器样式 */
+        .thinking-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .thinking-indicator .message-content {
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);
+            border: 1px solid #e8f4f8;
+            color: #69cee0;
+            font-style: italic;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thinking-indicator .message-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(105, 206, 224, 0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .thinking-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .thinking-dot {
+            width: 6px;
+            height: 6px;
+            background: #69cee0;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .thinking-dot:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-dot:nth-child(2) { animation-delay: -0.16s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* AI回复逐行浮现动画 */
+        .ai-content .typing-line {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: typingFadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes typingFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .input-section {
+            padding: 25px;
+            background: white;
+            border-top: 1px solid #e8f4f8;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .message-input {
+            flex: 1;
+            min-height: 50px;
+            max-height: 120px;
+            padding: 15px 20px;
+            border: 2px solid #e8f4f8;
+            border-radius: 25px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f8fbff;
+        }
+
+        .message-input:focus {
+            border-color: #69cee0;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(105, 206, 224, 0.1);
+        }
+
+        .message-input:disabled {
+            background: #f5f5f5;
+            border-color: #ddd;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(105, 206, 224, 0.3);
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(105, 206, 224, 0.4);
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggestion-btn {
+            background: linear-gradient(135deg, #f8fbff 0%, #e8f4f8 100%);
+            color: #4facfe;
+            border: 1px solid #e8f4f8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .suggestion-btn:hover {
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 100%);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(105, 206, 224, 0.3);
+        }
+
+        /* AI内容格式化样式 */
+        .ai-content {
+            line-height: 1.8;
+        }
+
+        .ai-content h1, .ai-content h2, .ai-content h3 {
+            color: #2c5aa0;
+            margin: 16px 0 12px 0;
+            font-weight: 600;
+        }
+
+        .ai-content h1 { font-size: 20px; }
+        .ai-content h2 { font-size: 18px; }
+        .ai-content h3 { font-size: 16px; }
+
+        .ai-content .title-icon {
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+
+        .ai-content p {
+            margin: 12px 0;
+            text-align: justify;
+        }
+
+        .ai-content .content-paragraph {
+            margin: 12px 0;
+            text-align: justify;
+        }
+
+        .ai-content .content-list {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .ai-content .list-item {
+            margin: 6px 0;
+        }
+
+        .ai-content .list-item-bold {
+            margin: 8px 0;
+            font-weight: 500;
+        }
+
+        .ai-content .list-content {
+            font-weight: normal;
+            color: #555;
+        }
+
+        .ai-content .numbered-item {
+            margin: 8px 0;
+        }
+
+        .ai-content .highlight {
+            color: #2c5aa0;
+            font-weight: 600;
+        }
+
+        .ai-content .tag {
+            background: linear-gradient(135deg, #69cee0, #4facfe);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .ai-content .quote {
+            background: #f8fbff;
+            color: #4facfe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .ai-content .content-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #69cee0, transparent);
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                height: calc(100vh - 20px);
+                border-radius: 15px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .suggestions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 高考志愿填报AI助手</h1>
+            <p>专业、智能、贴心的志愿填报咨询服务</p>
+        </div>
+
+
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">
+                <div class="avatar ai-avatar"></div>
+                <div class="message-content">
+                    <div class="ai-content">
+                        <p>您好！我是您的专属高考志愿填报助手 🌟</p>
+                        <p>我可以为您提供：</p>
+                        <ul class="content-list">
+                            <li class="list-item-bold"><strong>院校信息查询</strong> - <span class="list-content">详细的大学介绍和专业信息</span></li>
+                            <li class="list-item-bold"><strong>录取分析</strong> - <span class="list-content">历年分数线和录取概率预测</span></li>
+                            <li class="list-item-bold"><strong>专业推荐</strong> - <span class="list-content">基于兴趣和成绩的个性化建议</span></li>
+                            <li class="list-item-bold"><strong>志愿填报策略</strong> - <span class="list-content">科学的填报方案和技巧</span></li>
+                        </ul>
+                        <p>请告诉我您想了解什么，我会竭诚为您服务！✨</p>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <textarea id="messageInput" class="message-input" placeholder="请输入您的问题，比如：我想了解北京大学的计算机专业..." rows="1"></textarea>
+                <button onclick="sendMessage()" id="sendBtn" class="send-btn" disabled>
+                    <span>➤</span>
+                </button>
+            </div>
+            <div id="suggestions" class="suggestions"></div>
+            <div id="chatStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let currentSessionId = null;
+        let userInfo = null;
+
+        // 检查登录状态并初始化
+        function checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            const storedUserInfo = localStorage.getItem('userInfo');
+
+            if (token && storedUserInfo) {
+                try {
+                    authToken = token;
+                    userInfo = JSON.parse(storedUserInfo);
+                    document.getElementById('sendBtn').disabled = false;
+                    console.log('用户已登录:', userInfo.username);
+                    return true;
+                } catch (error) {
+                    console.error('解析用户信息失败:', error);
+                    // 清除损坏的数据
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userInfo');
+                }
+            }
+
+            // 未登录，重定向到登录页面
+            console.log('用户未登录，重定向到登录页面');
+            alert('请先登录后再使用AI助手功能');
+            window.location.href = '/index.html';
+            return false;
+        }
+
+        // 发送消息
+        async function sendMessage(message = null) {
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const messageText = message || messageInput.value.trim();
+
+            if (!messageText) {
+                return;
+            }
+
+            // 显示用户消息
+            addMessage(messageText, 'user');
+
+            // 清空输入框和建议
+            if (!message) {
+                messageInput.value = '';
+                autoResizeTextarea();
+            }
+            clearSuggestions();
+
+            // 显示思考指示器
+            showThinkingIndicator();
+
+            // 禁用输入和发送按钮
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+            messageInput.placeholder = 'AI正在回复中，请稍候...';
+
+            try {
+                const requestBody = {
+                    message: messageText,
+                    sessionId: currentSessionId,
+                    useContext: true,
+                    contextSize: 10
+                };
+
+                const response = await fetch('/api/chat/message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const result = await response.json();
+
+                // 隐藏思考指示器
+                hideThinkingIndicator();
+
+                if (result.code === 200) {
+                    const data = result.data;
+                    currentSessionId = data.sessionId;
+
+                    // 显示AI回复
+                    addMessage(data.reply, 'ai');
+
+                    // 显示建议问题
+                    showSuggestions(data.suggestions);
+                } else {
+                    addMessage('抱歉，我遇到了一些问题：' + (result.message || '未知错误'), 'ai');
+                }
+            } catch (error) {
+                hideThinkingIndicator();
+                addMessage('抱歉，网络连接出现问题，请稍后重试。', 'ai');
+                console.error('发送消息失败:', error);
+            } finally {
+                // 恢复输入和发送按钮
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.placeholder = '请输入您的问题，比如：我想了解北京大学的计算机专业...';
+                messageInput.focus(); // 自动聚焦到输入框
+            }
+        }
+
+        // 添加消息到聊天容器
+        function addMessage(content, type) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+
+            if (type === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="message-content">${escapeHtml(content)}</div>
+                    <div class="avatar user-avatar">我</div>
+                `;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="avatar ai-avatar"></div>
+                    <div class="message-content">
+                        <div class="ai-content" id="ai-content-${Date.now()}"></div>
+                    </div>
+                `;
+                chatContainer.appendChild(messageDiv);
+
+                // AI回复使用打字机效果
+                const aiContentDiv = messageDiv.querySelector('.ai-content');
+                typewriterEffect(aiContentDiv, formatAIResponse(content));
+            }
+        }
+
+        // 打字机效果函数
+        function typewriterEffect(element, content) {
+            element.innerHTML = '';
+
+            // 将内容按行分割
+            const lines = content.split(/(<[^>]+>|[^<]+)/g).filter(line => line.trim());
+            let currentLineIndex = 0;
+
+            function showNextLine() {
+                if (currentLineIndex < lines.length) {
+                    const line = lines[currentLineIndex];
+
+                    // 创建行元素
+                    const lineElement = document.createElement('span');
+                    lineElement.className = 'typing-line';
+                    lineElement.innerHTML = line;
+
+                    element.appendChild(lineElement);
+
+                    // 触发动画
+                    setTimeout(() => {
+                        lineElement.style.animationDelay = `${currentLineIndex * 0.1}s`;
+                    }, 50);
+
+                    currentLineIndex++;
+
+                    // 滚动到底部
+                    const chatContainer = document.getElementById('chatContainer');
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                    // 继续下一行
+                    setTimeout(showNextLine, 200);
+                }
+            }
+
+            showNextLine();
+        }
+
+        // 格式化AI回复内容
+        function formatAIResponse(content) {
+            // 转义HTML
+            content = escapeHtml(content);
+
+            // 处理Markdown格式
+            content = content
+                // 处理标题（支持多种格式）
+                .replace(/### \*\*(.*?)\*\*/g, '<h3><i class="title-icon">📚</i>$1</h3>')
+                .replace(/### (.*?)$/gm, '<h3><i class="title-icon">📚</i>$1</h3>')
+                .replace(/## \*\*(.*?)\*\*/g, '<h2><i class="title-icon">🎯</i>$1</h2>')
+                .replace(/## (.*?)$/gm, '<h2><i class="title-icon">🎯</i>$1</h2>')
+                .replace(/# \*\*(.*?)\*\*/g, '<h1><i class="title-icon">🏛️</i>$1</h1>')
+                .replace(/# (.*?)$/gm, '<h1><i class="title-icon">🏛️</i>$1</h1>')
+
+                // 处理粗体
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>')
+
+                // 处理列表项（支持多级）
+                .replace(/^- \*\*(.*?)\*\*：(.*?)$/gm, '<li class="list-item-bold"><strong>$1</strong>：<span class="list-content">$2</span></li>')
+                .replace(/^- \*\*(.*?)\*\*/g, '<li class="list-item-bold"><strong>$1</strong></li>')
+                .replace(/^- (.*?)$/gm, '<li class="list-item">$1</li>')
+
+                // 处理数字列表
+                .replace(/^\d+\. (.*?)$/gm, '<li class="numbered-item">$1</li>')
+
+                // 处理分隔线
+                .replace(/^---$/gm, '<hr class="content-divider">')
+
+                // 处理特殊标记
+                .replace(/【(.*?)】/g, '<span class="tag">$1</span>')
+                .replace(/「(.*?)」/g, '<span class="quote">$1</span>')
+
+                // 处理段落
+                .split('\n\n')
+                .map(paragraph => {
+                    if (paragraph.trim()) {
+                        // 如果包含列表项，包装为列表
+                        if (paragraph.includes('<li')) {
+                            if (paragraph.includes('numbered-item')) {
+                                return '<ol class="content-list numbered">' + paragraph + '</ol>';
+                            } else {
+                                return '<ul class="content-list">' + paragraph + '</ul>';
+                            }
+                        }
+                        // 如果是标题或分隔线，直接返回
+                        else if (paragraph.includes('<h') || paragraph.includes('<hr')) {
+                            return paragraph;
+                        }
+                        // 普通段落
+                        else {
+                            return '<p class="content-paragraph">' + paragraph + '</p>';
+                        }
+                    }
+                    return '';
+                })
+                .filter(p => p)
+                .join('');
+
+            return content;
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 显示思考指示器
+        function showThinkingIndicator() {
+            // 移除已存在的思考指示器
+            hideThinkingIndicator();
+
+            // 创建新的思考指示器
+            const chatContainer = document.getElementById('chatContainer');
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'message ai-message thinking-indicator';
+            thinkingDiv.id = 'thinkingIndicator';
+            thinkingDiv.innerHTML = `
+                <div class="avatar ai-avatar"></div>
+                <div class="message-content">
+                    <span style="margin-right: 8px;">AI助手正在思考</span>
+                    <span class="thinking-dots">
+                        <span class="thinking-dot"></span>
+                        <span class="thinking-dot"></span>
+                        <span class="thinking-dot"></span>
+                    </span>
+                </div>
+            `;
+
+            // 添加到聊天容器末尾
+            chatContainer.appendChild(thinkingDiv);
+
+            // 显示思考指示器
+            setTimeout(() => {
+                thinkingDiv.style.display = 'flex';
+            }, 100);
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // 隐藏思考指示器
+        function hideThinkingIndicator() {
+            const indicator = document.getElementById('thinkingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // 预设的推荐问题
+        const recommendedQuestions = [
+            "我想了解北京大学的计算机专业",
+            "清华大学和北京大学哪个更好？",
+            "我的分数是650分，能上哪些985大学？",
+            "计算机专业的就业前景如何？",
+            "医学专业需要什么样的条件？",
+            "如何选择适合自己的专业？",
+            "双一流大学有哪些优势？",
+            "理科生可以选择哪些专业？",
+            "文科生有哪些好的专业推荐？",
+            "什么是强基计划？如何报考？",
+            "艺术类专业的录取要求是什么？",
+            "中外合作办学值得选择吗？",
+            "如何看待专业的冷门和热门？",
+            "大学排名重要还是专业排名重要？",
+            "如何平衡兴趣和就业前景？"
+        ];
+
+        // 显示建议问题
+        function showSuggestions(suggestions) {
+            const suggestionsDiv = document.getElementById('suggestions');
+
+            // 合并AI返回的建议和预设的推荐问题
+            let allSuggestions = [];
+            if (suggestions && suggestions.length > 0) {
+                allSuggestions = [...suggestions];
+            }
+
+            // 随机添加一些预设问题
+            const randomQuestions = getRandomQuestions(4);
+            allSuggestions = [...allSuggestions, ...randomQuestions];
+
+            // 去重并限制数量
+            allSuggestions = [...new Set(allSuggestions)].slice(0, 6);
+
+            suggestionsDiv.innerHTML = '';
+            allSuggestions.forEach(suggestion => {
+                const btn = document.createElement('button');
+                btn.className = 'suggestion-btn';
+                btn.textContent = suggestion;
+                btn.onclick = () => {
+                    const messageInput = document.getElementById('messageInput');
+                    if (!messageInput.disabled) {
+                        sendMessage(suggestion);
+                    }
+                };
+                suggestionsDiv.appendChild(btn);
+            });
+        }
+
+        // 获取随机推荐问题
+        function getRandomQuestions(count) {
+            const shuffled = [...recommendedQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        // 清空建议
+        function clearSuggestions() {
+            document.getElementById('suggestions').innerHTML = '';
+        }
+
+        // 自动调整输入框高度
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('messageInput');
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        }
+
+        // 初始化推荐问题
+        function initSuggestions() {
+            showSuggestions([]);
+        }
+
+        // 显示状态信息
+        function showStatus(element, message, type) {
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 3000);
+        }
+
+        // 检查AI头像图片是否加载成功
+        function checkAvatarImage() {
+            const avatars = document.querySelectorAll('.ai-avatar');
+            avatars.forEach(avatar => {
+                const img = new Image();
+                img.onload = function() {
+                    avatar.classList.add('loaded');
+                };
+                img.onerror = function() {
+                    // 图片加载失败，保持备用样式
+                    console.log('AI头像图片加载失败，使用备用样式');
+                };
+                img.src = 'images/ai-avatar.png';
+            });
+        }
+
+        // 事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 首先检查登录状态
+            if (!checkLoginStatus()) {
+                return; // 如果未登录，会重定向到登录页面
+            }
+
+            // 检查AI头像图片
+            checkAvatarImage();
+
+            const messageInput = document.getElementById('messageInput');
+
+            // 初始化推荐问题
+            setTimeout(initSuggestions, 1000);
+
+            // 输入框事件
+            messageInput.addEventListener('input', autoResizeTextarea);
+
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!this.disabled) {
+                        sendMessage();
+                    }
+                }
+            });
+
+            // 输入框获得焦点时的效果
+            messageInput.addEventListener('focus', function() {
+                this.placeholder = '请输入您的问题...';
+            });
+
+            messageInput.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.placeholder = '请输入您的问题，比如：我想了解北京大学的计算机专业...';
+                }
+            });
+
+            console.log('🎓 高考志愿填报AI助手已就绪');
+        });
+    </script>
+    <script src="js/sidebar.js"></script>
+</body>
+</html>

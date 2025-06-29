@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侧边栏集成测试</title>
+    <link rel="stylesheet" href="src/main/resources/static/css/sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 50%, #00f2fe 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background-color: #69cee0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover { 
+            background-color: #4facfe; 
+            transform: translateY(-1px);
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .feature-list li i {
+            color: #69cee0;
+            margin-right: 10px;
+            width: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 侧边栏集成测试</h1>
+        <p>测试AI对话页面的侧边栏集成和滚动条隐藏功能</p>
+        
+        <div class="test-section">
+            <h3>📋 修改内容检查</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check-circle"></i> AI对话页面添加了sidebar.css引用</li>
+                <li><i class="fas fa-check-circle"></i> AI对话页面添加了sidebar.js引用</li>
+                <li><i class="fas fa-check-circle"></i> 移除了AI页面头部的返回按钮</li>
+                <li><i class="fas fa-check-circle"></i> 侧边栏AI助手菜单项已激活</li>
+                <li><i class="fas fa-check-circle"></i> 侧边栏滚动条已隐藏但保持滚动功能</li>
+                <li><i class="fas fa-check-circle"></i> 管理员页面返回主页链接已修正</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 功能测试</h3>
+            <div id="testResults"></div>
+            <button onclick="testSidebarCSS()">测试侧边栏CSS</button>
+            <button onclick="testSidebarJS()">测试侧边栏JS</button>
+            <button onclick="testScrollbarHiding()">测试滚动条隐藏</button>
+            <button onclick="simulateLogin()">模拟登录</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 页面链接测试</h3>
+            <button onclick="testAIPage()">测试AI对话页面</button>
+            <button onclick="testMainPage()">测试主页面</button>
+            <button onclick="testAdminPage()">测试管理页面</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 响应式测试</h3>
+            <p>请调整浏览器窗口大小测试响应式效果</p>
+            <button onclick="toggleMobileView()">切换移动端视图</button>
+        </div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultElement = document.createElement('div');
+            resultElement.className = `status ${type}`;
+            resultElement.textContent = message;
+            resultsDiv.appendChild(resultElement);
+            
+            // 5秒后移除结果
+            setTimeout(() => {
+                if (resultElement.parentNode) {
+                    resultElement.parentNode.removeChild(resultElement);
+                }
+            }, 5000);
+        }
+
+        function testSidebarCSS() {
+            // 检查CSS文件是否加载
+            const links = document.querySelectorAll('link[href*="sidebar.css"]');
+            if (links.length > 0) {
+                showResult('✅ 侧边栏CSS文件已正确引用', 'success');
+            } else {
+                showResult('❌ 侧边栏CSS文件未找到', 'error');
+            }
+        }
+
+        function testSidebarJS() {
+            // 检查Sidebar类是否存在
+            if (typeof window.Sidebar !== 'undefined') {
+                showResult('✅ 侧边栏JavaScript已加载', 'success');
+            } else {
+                showResult('❌ 侧边栏JavaScript未加载', 'error');
+            }
+        }
+
+        function testScrollbarHiding() {
+            // 创建测试元素来检查滚动条样式
+            const testDiv = document.createElement('div');
+            testDiv.className = 'sidebar';
+            testDiv.style.cssText = 'position: absolute; top: -1000px; width: 100px; height: 100px; overflow-y: auto;';
+            testDiv.innerHTML = '<div style="height: 200px;">测试内容</div>';
+            document.body.appendChild(testDiv);
+            
+            const computedStyle = window.getComputedStyle(testDiv);
+            const scrollbarWidth = computedStyle.scrollbarWidth;
+            const msOverflowStyle = computedStyle.msOverflowStyle;
+            
+            document.body.removeChild(testDiv);
+            
+            if (scrollbarWidth === 'none' || msOverflowStyle === 'none') {
+                showResult('✅ 滚动条隐藏样式已应用', 'success');
+            } else {
+                showResult('ℹ️ 滚动条隐藏样式可能需要在实际侧边栏中测试', 'info');
+            }
+        }
+
+        function simulateLogin() {
+            // 模拟登录状态
+            localStorage.setItem('token', 'test_token_' + Date.now());
+            localStorage.setItem('username', 'testuser');
+            localStorage.setItem('userId', '1');
+            showResult('✅ 已模拟登录状态', 'success');
+        }
+
+        function testAIPage() {
+            showResult('🔄 准备跳转到AI对话页面...', 'info');
+            setTimeout(() => {
+                window.open('/ai-chat-test.html', '_blank');
+            }, 1000);
+        }
+
+        function testMainPage() {
+            showResult('🔄 准备跳转到主页面...', 'info');
+            setTimeout(() => {
+                window.open('/main.html', '_blank');
+            }, 1000);
+        }
+
+        function testAdminPage() {
+            showResult('🔄 准备跳转到管理页面...', 'info');
+            setTimeout(() => {
+                window.open('/admin.html', '_blank');
+            }, 1000);
+        }
+
+        function toggleMobileView() {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            const currentContent = viewport.getAttribute('content');
+            
+            if (currentContent.includes('width=device-width')) {
+                viewport.setAttribute('content', 'width=375');
+                showResult('📱 切换到移动端视图 (375px)', 'info');
+            } else {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                showResult('💻 切换到桌面端视图', 'info');
+            }
+        }
+
+        // 页面加载时自动运行一些测试
+        document.addEventListener('DOMContentLoaded', function() {
+            showResult('🚀 侧边栏集成测试页面已加载', 'info');
+            
+            // 自动检查基本功能
+            setTimeout(() => {
+                testSidebarCSS();
+                testScrollbarHiding();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

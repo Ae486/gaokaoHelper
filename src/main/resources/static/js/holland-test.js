@@ -6,7 +6,7 @@ class HollandTest {
         this.currentQuestionIndex = 0;
         this.startTime = null;
         this.testResult = null;
-        
+
         this.init();
     }
 
@@ -45,10 +45,12 @@ class HollandTest {
         this.startTime = Date.now();
         this.answers = new Array(this.questions.length).fill(null);
         this.currentQuestionIndex = 0;
-        
+
         this.showPage('test-page');
         this.displayQuestion();
     }
+
+
 
     displayQuestion() {
         const question = this.questions[this.currentQuestionIndex];
@@ -77,18 +79,69 @@ class HollandTest {
     }
 
     selectOption(option, updateAnswer = true) {
+        console.log('Holland selectOption called with:', option, updateAnswer);
+
         // 清除之前的选择
         this.clearSelection();
 
-        // 设置新的选择
-        const optionElement = document.getElementById(`option-${option.toLowerCase()}`);
+        // 设置新的选择 - 修复ID匹配问题
+        const optionElement = option === 'YES' ?
+            document.getElementById('option-yes') :
+            document.getElementById('option-no');
+
         if (optionElement) {
             optionElement.classList.add('selected');
+            console.log('Holland option element found and selected:', optionElement);
+        } else {
+            console.error('Holland option element not found for:', option);
         }
 
         if (updateAnswer) {
             this.answers[this.currentQuestionIndex] = option;
             this.updateNavigationButtons();
+
+            // 添加选择动画效果
+            if (optionElement) {
+                optionElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    optionElement.style.transform = 'scale(1)';
+                }, 150);
+            }
+
+            console.log('Holland setting timeout for auto advance...');
+            // 自动跳转到下一题（延迟500ms以显示选择效果）
+            setTimeout(() => {
+                console.log('Holland auto advance timeout triggered');
+                this.autoNextQuestion();
+            }, 500);
+        }
+    }
+
+    autoNextQuestion() {
+        console.log('Holland autoNextQuestion called, current index:', this.currentQuestionIndex, 'total questions:', this.questions.length);
+
+        // 如果不是最后一题，自动跳转到下一题
+        if (this.currentQuestionIndex < this.questions.length - 1) {
+            console.log('Holland moving to next question...');
+            this.currentQuestionIndex++;
+            this.displayQuestion();
+
+            // 添加页面切换动画
+            const questionContainer = document.querySelector('.question-container');
+            if (questionContainer) {
+                questionContainer.style.opacity = '0.7';
+                questionContainer.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    questionContainer.style.opacity = '1';
+                    questionContainer.style.transform = 'translateX(0)';
+                }, 100);
+            }
+        } else {
+            console.log('Holland last question, submitting test...');
+            // 最后一题，自动提交测试
+            setTimeout(() => {
+                this.submitTest();
+            }, 300);
         }
     }
 
@@ -315,13 +368,58 @@ class HollandTest {
         this.showPage('intro-page');
     }
 
-    viewDetailedReport() {
-        // TODO: 实现详细报告页面
-        alert('详细报告功能正在开发中...');
+    async viewDetailedReport() {
+        if (!this.testResult) {
+            alert('没有测试结果数据');
+            return;
+        }
+
+        try {
+            // 显示加载状态
+            this.showReportModal();
+            this.showReportLoading();
+
+            // 调用后端API生成详细报告
+            const response = await fetch('/api/personality-test/detailed-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.testResult)
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                // 显示报告内容
+                this.showReportContent(result.data);
+            } else {
+                throw new Error(result.message || '生成报告失败');
+            }
+        } catch (error) {
+            console.error('生成详细报告失败:', error);
+            this.showReportError('生成报告失败，请稍后重试');
+        }
     }
 
     goToRecommendation() {
         window.location.href = '/recommendation-new.html';
+    }
+
+    showReportModal() {
+        showReportModal();
+    }
+
+    showReportLoading() {
+        showReportLoading();
+    }
+
+    showReportContent(content) {
+        showReportContent(content);
+    }
+
+    showReportError(message) {
+        showReportError(message);
     }
 }
 
@@ -337,6 +435,11 @@ function startTest() {
 }
 
 function selectOption(option) {
+    console.log('Global Holland selectOption called with:', option);
+    if (!hollandTest) {
+        console.error('hollandTest is not initialized!');
+        return;
+    }
     hollandTest.selectOption(option);
 }
 
@@ -362,4 +465,68 @@ function viewDetailedReport() {
 
 function goToRecommendation() {
     hollandTest.goToRecommendation();
+}
+
+// 报告弹窗相关函数
+function showReportModal() {
+    const modal = document.getElementById('report-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function hideReportModal() {
+    const modal = document.getElementById('report-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function showReportLoading() {
+    const loadingDiv = document.getElementById('report-loading');
+    const contentDiv = document.getElementById('report-content');
+    const errorDiv = document.getElementById('report-error');
+
+    if (loadingDiv) loadingDiv.style.display = 'block';
+    if (contentDiv) contentDiv.style.display = 'none';
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+function showReportContent(content) {
+    const loadingDiv = document.getElementById('report-loading');
+    const contentDiv = document.getElementById('report-content');
+    const errorDiv = document.getElementById('report-error');
+
+    if (loadingDiv) loadingDiv.style.display = 'none';
+    if (contentDiv) {
+        contentDiv.style.display = 'block';
+        // 将AI生成的报告内容转换为HTML格式
+        const formattedContent = formatReportContent(content);
+        contentDiv.innerHTML = formattedContent;
+    }
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+function showReportError(message) {
+    const loadingDiv = document.getElementById('report-loading');
+    const contentDiv = document.getElementById('report-content');
+    const errorDiv = document.getElementById('report-error');
+
+    if (loadingDiv) loadingDiv.style.display = 'none';
+    if (contentDiv) contentDiv.style.display = 'none';
+    if (errorDiv) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = `<p class="error-message">${message}</p>`;
+    }
+}
+
+function formatReportContent(content) {
+    // 将纯文本转换为HTML格式
+    return content
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>')
+        .replace(/^/, '<p>')
+        .replace(/$/, '</p>')
+        .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
+        .replace(/【([^】]+)】/g, '<h3>$1</h3>');
 }

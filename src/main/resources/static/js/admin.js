@@ -277,7 +277,7 @@ function toggleSidebar() {
 
 // 返回主页
 function goBack() {
-    window.location.href = '/index.html';
+    window.location.href = '/main.html';
 }
 
 // 退出登录

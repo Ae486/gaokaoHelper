@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试自动跳转功能</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #69cee0 0%, #4facfe 50%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .test-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .test-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .holland-link {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+        }
+        
+        .holland-link:hover {
+            box-shadow: 0 10px 25px rgba(17, 153, 142, 0.3) !important;
+        }
+        
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .feature-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🚀 测试页面修复完成</h1>
+        <p>MBTI和霍兰德测试页面已经修复和优化：</p>
+
+        <div class="features">
+            <div class="feature-item">
+                <strong>✅ 修复霍兰德测试</strong><br>
+                修复了霍兰德测试页面无法自动跳转的问题
+            </div>
+            <div class="feature-item">
+                <strong>✨ 统一自动跳转</strong><br>
+                两个测试页面都默认启用自动跳转功能
+            </div>
+            <div class="feature-item">
+                <strong>🎨 保留动画效果</strong><br>
+                选择时的缩放动画和页面切换动画
+            </div>
+            <div class="feature-item">
+                <strong>🧹 简化界面</strong><br>
+                移除了切换按钮，界面更加简洁
+            </div>
+            <div class="feature-item">
+                <strong>⚡ 提升体验</strong><br>
+                选择答案后500ms自动跳转到下一题
+            </div>
+            <div class="feature-item">
+                <strong>🎯 智能提交</strong><br>
+                最后一题自动提交测试结果
+            </div>
+        </div>
+        
+        <div class="test-links">
+            <a href="src/main/resources/static/mbti-test.html" class="test-link">
+                🧠 测试MBTI
+            </a>
+            <a href="src/main/resources/static/holland-test.html" class="test-link holland-link">
+                🧭 测试霍兰德
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px; color: #666; font-size: 0.9rem;">
+            💡 提示：两个测试页面都已默认启用自动跳转功能，选择答案后自动跳转
+        </p>
+    </div>
+</body>
+</html>
