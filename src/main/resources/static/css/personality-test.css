@@ -322,16 +322,19 @@ body {
     margin-bottom: 8px;
 }
 
-.progress-fill {
+/* 测试题进度条样式 - 确保不受加载动画影响 */
+.test-container .progress-fill {
     height: 100%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 4px;
     transition: width 0.3s ease;
     width: 0%;
+    animation: none !important; /* 明确禁用动画 */
 }
 
-.holland-progress {
+.test-container .progress-fill.holland-progress {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+    animation: none !important; /* 明确禁用动画 */
 }
 
 .progress-text {
@@ -1026,6 +1029,48 @@ body {
 .report-loading p {
     color: #666;
     font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.report-loading .loading-tip {
+    color: #ff6b6b;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-top: 15px;
+}
+
+.loading-dots {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.loading-dots .dot {
+    width: 8px;
+    height: 8px;
+    background: #667eea;
+    border-radius: 50%;
+    animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+.loading-dots .dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.loading-dots .dot:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes dotPulse {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 }
 
 .report-content {

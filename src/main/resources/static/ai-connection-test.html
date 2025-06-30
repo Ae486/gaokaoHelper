@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI连接测试 - 高考志愿填报助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .test-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .test-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .test-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .result-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-pending { background: #ffc107; }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <a href="main.html" class="back-button">← 返回主页</a>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🤖 AI连接测试工具</h1>
+            <p>测试DeepSeek API连接状态和MBTI报告生成功能</p>
+        </div>
+
+        <!-- 基础连接测试 -->
+        <div class="test-section">
+            <h3><span class="status-indicator status-pending" id="basic-status"></span>基础连接测试</h3>
+            <p>发送简单请求测试AI服务是否可用</p>
+            <button class="test-button" onclick="testBasicConnection()" id="basic-btn">
+                开始基础测试
+            </button>
+            <div id="basic-result" class="result-area" style="display: none;"></div>
+        </div>
+
+        <!-- 简化MBTI报告测试 -->
+        <div class="test-section">
+            <h3><span class="status-indicator status-pending" id="mbti-status"></span>简化MBTI报告测试</h3>
+            <p>测试生成简短的MBTI分析报告</p>
+            <button class="test-button" onclick="testSimpleMbtiReport()" id="mbti-btn">
+                测试MBTI报告
+            </button>
+            <div id="mbti-result" class="result-area" style="display: none;"></div>
+        </div>
+
+        <!-- 完整报告测试 -->
+        <div class="test-section">
+            <h3><span class="status-indicator status-pending" id="full-status"></span>完整报告测试</h3>
+            <p>测试生成完整的详细报告（可能需要较长时间）</p>
+            <button class="test-button" onclick="testFullReport()" id="full-btn">
+                测试完整报告（原版）
+            </button>
+            <button class="test-button" onclick="testFullReportWithExtendedTimeout()" id="extended-btn">
+                测试完整报告（延长超时）
+            </button>
+            <div id="full-result" class="result-area" style="display: none;"></div>
+        </div>
+
+        <!-- 批量测试 -->
+        <div class="test-section">
+            <h3>批量测试</h3>
+            <p>依次执行所有测试项目</p>
+            <button class="test-button" onclick="runAllTests()" id="all-btn">
+                运行所有测试
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 获取JWT令牌
+        function getAuthToken() {
+            return localStorage.getItem('token') || sessionStorage.getItem('token');
+        }
+
+        // 通用API请求函数
+        async function apiRequest(url, method = 'POST', data = null) {
+            const token = getAuthToken();
+            if (!token) {
+                throw new Error('未找到认证令牌，请先登录');
+            }
+
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+
+            const response = await fetch(url, options);
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${result.message || '请求失败'}`);
+            }
+            
+            return result;
+        }
+
+        // 显示结果
+        function showResult(elementId, statusId, success, message, data = null) {
+            const resultElement = document.getElementById(elementId);
+            const statusElement = document.getElementById(statusId);
+            
+            resultElement.style.display = 'block';
+            resultElement.className = `result-area ${success ? 'result-success' : 'result-error'}`;
+            
+            let content = `时间: ${new Date().toLocaleString()}\n`;
+            content += `状态: ${success ? '成功' : '失败'}\n`;
+            content += `消息: ${message}\n`;
+            
+            if (data) {
+                content += `\n响应数据:\n${typeof data === 'string' ? data : JSON.stringify(data, null, 2)}`;
+            }
+            
+            resultElement.textContent = content;
+            
+            // 更新状态指示器
+            statusElement.className = `status-indicator ${success ? 'status-success' : 'status-error'}`;
+        }
+
+        // 显示加载状态
+        function showLoading(buttonId, text = '测试中...') {
+            const button = document.getElementById(buttonId);
+            button.disabled = true;
+            button.innerHTML = `<span class="loading"></span>${text}`;
+        }
+
+        // 恢复按钮状态
+        function resetButton(buttonId, text) {
+            const button = document.getElementById(buttonId);
+            button.disabled = false;
+            button.innerHTML = text;
+        }
+
+        // 基础连接测试
+        async function testBasicConnection() {
+            showLoading('basic-btn');
+            
+            try {
+                console.log('开始基础连接测试...');
+                const result = await apiRequest('/api/personality-test/test-ai-connection');
+                
+                console.log('基础连接测试成功:', result);
+                showResult('basic-result', 'basic-status', true, result.message, result.data);
+                
+            } catch (error) {
+                console.error('基础连接测试失败:', error);
+                showResult('basic-result', 'basic-status', false, error.message);
+            } finally {
+                resetButton('basic-btn', '开始基础测试');
+            }
+        }
+
+        // 简化MBTI报告测试
+        async function testSimpleMbtiReport() {
+            showLoading('mbti-btn');
+            
+            try {
+                console.log('开始简化MBTI报告测试...');
+                const result = await apiRequest('/api/personality-test/test-simple-mbti-report');
+                
+                console.log('简化MBTI报告测试成功:', result);
+                showResult('mbti-result', 'mbti-status', true, result.message, result.data);
+                
+            } catch (error) {
+                console.error('简化MBTI报告测试失败:', error);
+                showResult('mbti-result', 'mbti-status', false, error.message);
+            } finally {
+                resetButton('mbti-btn', '测试MBTI报告');
+            }
+        }
+
+        // 完整报告测试（原版）
+        async function testFullReport() {
+            showLoading('full-btn', '生成中...(可能需要1-2分钟)');
+
+            try {
+                console.log('开始完整报告测试（原版）...');
+
+                // 构造测试数据
+                const testData = {
+                    testType: "MBTI",
+                    testResult: "INTJ",
+                    typeName: "建筑师",
+                    typeDescription: "INTJ类型的人是完美主义者。他们强烈地要求个人自由和能力，同时在他们独创的思想中，不可动摇的信仰驱动着他们达到目标。",
+                    dimensionScores: {
+                        "EI": 25,
+                        "SN": 75,
+                        "TF": 80,
+                        "JP": 70
+                    },
+                    recommendedMajors: [
+                        {
+                            majorName: "计算机科学与技术",
+                            matchScore: 0.95
+                        },
+                        {
+                            majorName: "软件工程",
+                            matchScore: 0.90
+                        }
+                    ]
+                };
+
+                const result = await apiRequest('/api/personality-test/detailed-report', 'POST', testData);
+
+                console.log('完整报告测试成功（原版）:', result);
+                showResult('full-result', 'full-status', true, result.message, result.data);
+
+            } catch (error) {
+                console.error('完整报告测试失败（原版）:', error);
+                showResult('full-result', 'full-status', false, error.message);
+            } finally {
+                resetButton('full-btn', '测试完整报告（原版）');
+            }
+        }
+
+        // 完整报告测试（延长超时版本）
+        async function testFullReportWithExtendedTimeout() {
+            showLoading('extended-btn', '生成中...(延长超时，可能需要2-3分钟)');
+
+            try {
+                console.log('开始完整报告测试（延长超时版本）...');
+
+                const result = await apiRequest('/api/personality-test/test-full-report-with-extended-timeout');
+
+                console.log('完整报告测试成功（延长超时版本）:', result);
+                showResult('full-result', 'full-status', true, result.message, result.data);
+
+            } catch (error) {
+                console.error('完整报告测试失败（延长超时版本）:', error);
+                showResult('full-result', 'full-status', false, error.message);
+            } finally {
+                resetButton('extended-btn', '测试完整报告（延长超时）');
+            }
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            const allButton = document.getElementById('all-btn');
+            allButton.disabled = true;
+            allButton.innerHTML = '<span class="loading"></span>运行中...';
+            
+            try {
+                console.log('开始批量测试...');
+                
+                // 依次执行测试
+                await testBasicConnection();
+                await new Promise(resolve => setTimeout(resolve, 2000)); // 等待2秒
+                
+                await testSimpleMbtiReport();
+                await new Promise(resolve => setTimeout(resolve, 2000)); // 等待2秒
+                
+                await testFullReport();
+                
+                console.log('所有测试完成');
+                
+            } catch (error) {
+                console.error('批量测试过程中出现错误:', error);
+            } finally {
+                allButton.disabled = false;
+                allButton.innerHTML = '运行所有测试';
+            }
+        }
+
+        // 页面加载时检查登录状态
+        window.onload = function() {
+            const token = getAuthToken();
+            if (!token) {
+                alert('请先登录后再进行测试');
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>

@@ -7,6 +7,7 @@ import com.gaokao.helper.entity.HollandQuestion;
 import com.gaokao.helper.entity.MbtiQuestion;
 import com.gaokao.helper.service.PersonalityTestService;
 import com.gaokao.helper.service.ChatService;
+import com.gaokao.helper.service.impl.ChatServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -144,6 +145,85 @@ public class PersonalityTestController {
         } catch (Exception e) {
             log.error("生成详细报告失败", e);
             return Result.error("生成报告失败，请稍后重试");
+        }
+    }
+
+    @PostMapping("/test-ai-connection")
+    @Operation(summary = "测试AI连接", description = "发送简化请求测试DeepSeek API连接状态")
+    public Result<String> testAiConnection() {
+        try {
+            log.info("=== 开始测试AI连接 ===");
+
+            // 构建简化的测试提示词
+            String simplePrompt = "请简单回复：AI连接测试成功。";
+
+            log.info("发送测试提示词: {}", simplePrompt);
+
+            // 调用AI服务
+            String response = chatService.generateReport(simplePrompt);
+
+            log.info("AI响应成功，内容: {}", response);
+
+            return Result.success("AI连接测试成功", response);
+        } catch (Exception e) {
+            log.error("AI连接测试失败", e);
+            return Result.error("AI连接测试失败: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/test-simple-mbti-report")
+    @Operation(summary = "测试简化MBTI报告", description = "发送简化的MBTI数据测试报告生成")
+    public Result<String> testSimpleMbtiReport() {
+        try {
+            log.info("=== 开始测试简化MBTI报告生成 ===");
+
+            // 构建简化的MBTI测试提示词
+            String simplePrompt = "请基于MBTI类型INTJ，生成一个100字以内的简短性格分析。";
+
+            log.info("发送简化MBTI提示词: {}", simplePrompt);
+
+            // 调用AI服务
+            String response = chatService.generateReport(simplePrompt);
+
+            log.info("简化MBTI报告生成成功，内容长度: {} 字符", response.length());
+            log.info("报告内容: {}", response);
+
+            return Result.success("简化MBTI报告生成成功", response);
+        } catch (Exception e) {
+            log.error("简化MBTI报告生成失败", e);
+            return Result.error("简化MBTI报告生成失败: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/test-full-report-with-extended-timeout")
+    @Operation(summary = "测试完整报告（延长超时）", description = "使用延长超时时间测试完整MBTI报告生成")
+    public Result<String> testFullReportWithExtendedTimeout() {
+        try {
+            log.info("=== 开始测试完整MBTI报告生成（延长超时版本）===");
+
+            // 构造完整的测试数据
+            TestResultResponse testResult = new TestResultResponse();
+            testResult.setTestType("MBTI");
+            testResult.setTestResult("INTJ");
+            testResult.setTypeName("建筑师");
+            testResult.setTypeDescription("INTJ类型的人是完美主义者。他们强烈地要求个人自由和能力，同时在他们独创的思想中，不可动摇的信仰驱动着他们达到目标。");
+
+            // 构建完整的提示词
+            String fullPrompt = buildReportPrompt(testResult);
+
+            log.info("完整提示词长度: {} 字符", fullPrompt.length());
+            log.info("提示词内容: {}", fullPrompt);
+
+            // 使用测试专用的服务方法（延长超时时间）
+            ChatServiceImpl chatServiceImpl = (ChatServiceImpl) chatService;
+            String response = chatServiceImpl.generateReportForTest(fullPrompt);
+
+            log.info("完整MBTI报告生成成功，内容长度: {} 字符", response.length());
+
+            return Result.success("完整MBTI报告生成成功（延长超时版本）", response);
+        } catch (Exception e) {
+            log.error("完整MBTI报告生成失败", e);
+            return Result.error("完整MBTI报告生成失败: " + e.getMessage());
         }
     }
 

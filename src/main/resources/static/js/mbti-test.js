@@ -360,16 +360,24 @@ class MBTITest {
             this.showReportModal();
             this.showReportLoading();
 
+            console.log('开始生成详细报告...');
+            const startTime = Date.now();
+
             // 调用后端API生成详细报告
             const response = await fetch('/api/personality-test/detailed-report', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || sessionStorage.getItem('token')}`
                 },
                 body: JSON.stringify(this.testResult)
             });
 
             const result = await response.json();
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+
+            console.log(`详细报告生成完成，耗时: ${duration}ms`);
 
             if (result.code === 200) {
                 // 显示报告内容
@@ -379,7 +387,18 @@ class MBTITest {
             }
         } catch (error) {
             console.error('生成详细报告失败:', error);
-            this.showReportError('生成报告失败，请稍后重试');
+            let errorMessage = '生成报告失败，请稍后重试';
+
+            // 根据错误类型提供更具体的提示
+            if (error.message.includes('timeout') || error.message.includes('超时')) {
+                errorMessage = '报告生成超时，AI服务繁忙，请稍后重试';
+            } else if (error.message.includes('网络')) {
+                errorMessage = '网络连接异常，请检查网络后重试';
+            } else if (error.message.includes('认证') || error.message.includes('token')) {
+                errorMessage = '登录已过期，请重新登录后重试';
+            }
+
+            this.showReportError(errorMessage);
         }
     }
 

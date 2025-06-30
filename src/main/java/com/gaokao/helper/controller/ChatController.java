@@ -155,7 +155,7 @@ public class ChatController {
         try {
             Long userId = jwtUtil.getUserIdFromRequest(request);
             chatService.deleteSession(sessionId, userId);
-            return Result.success("会话删除成功");
+            return Result.success("会话删除成功", null);
         } catch (BusinessException e) {
             log.error("删除会话失败: {}", e.getMessage());
             return Result.error(e.getMessage());
@@ -183,7 +183,7 @@ public class ChatController {
             }
             
             chatService.updateSessionTitle(sessionId, userId, title.trim());
-            return Result.success("会话标题更新成功");
+            return Result.success("会话标题更新成功", null);
         } catch (BusinessException e) {
             log.error("更新会话标题失败: {}", e.getMessage());
             return Result.error(e.getMessage());
@@ -204,7 +204,7 @@ public class ChatController {
         try {
             Long userId = jwtUtil.getUserIdFromRequest(request);
             chatService.archiveSession(sessionId, userId);
-            return Result.success("会话归档成功");
+            return Result.success("会话归档成功", null);
         } catch (BusinessException e) {
             log.error("归档会话失败: {}", e.getMessage());
             return Result.error(e.getMessage());

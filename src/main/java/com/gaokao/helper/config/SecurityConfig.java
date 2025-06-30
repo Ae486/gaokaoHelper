@@ -70,6 +70,7 @@ public class SecurityConfig {
                 .antMatchers("/api/recommendation/**").permitAll()
                 .antMatchers("/api/recommendations/**").permitAll()
                 .antMatchers("/api/personality-test/**").permitAll()
+                .antMatchers("/api/test-report/**").permitAll()
                 .antMatchers("/api/chat/**").permitAll()
 
                 // 管理员接口 - 需要认证，权限在切面中验证

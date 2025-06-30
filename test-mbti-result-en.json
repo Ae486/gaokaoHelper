@@ -1,0 +1,32 @@
+{
+  "testType": "MBTI",
+  "testResult": "INTJ",
+  "typeName": "Architect",
+  "typeDescription": "Independent, decisive, imaginative and strategic perfectionist",
+  "dimensionScores": {
+    "EI": -5,
+    "SN": 3,
+    "TF": 7,
+    "JP": 4
+  },
+  "dimensionPercentages": {
+    "EI": 33.33,
+    "SN": 20.0,
+    "TF": 46.67,
+    "JP": 26.67
+  },
+  "recommendedMajors": [
+    {
+      "majorName": "Computer Science and Technology",
+      "category": "Engineering",
+      "matchScore": 0.95,
+      "reason": "Strong logical thinking and systematic problem-solving abilities"
+    },
+    {
+      "majorName": "Mathematics and Applied Mathematics",
+      "category": "Science",
+      "matchScore": 0.90,
+      "reason": "Excellent abstract thinking and theoretical analysis capabilities"
+    }
+  ]
+}

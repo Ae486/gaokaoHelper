@@ -329,7 +329,47 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public String generateReport(String prompt) {
         try {
-            log.info("开始生成测试报告");
+            log.info("=== 开始生成详细报告 ===");
+            log.info("提示词长度: {} 字符", prompt.length());
+
+            // 构建专门用于报告生成的消息列表
+            List<Map<String, String>> messages = new ArrayList<>();
+
+            // 系统提示词
+            Map<String, String> systemMessage = new HashMap<>();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", "你是一位专业的心理测评师和职业规划师，擅长分析性格测试结果并提供详细的个性化分析报告。请用专业、温暖、鼓励的语调撰写报告，内容要具体、实用。");
+            messages.add(systemMessage);
+
+            // 用户请求
+            Map<String, String> userMessage = new HashMap<>();
+            userMessage.put("role", "user");
+            userMessage.put("content", prompt);
+            messages.add(userMessage);
+
+            log.info("开始调用DeepSeek API生成详细报告...");
+            long startTime = System.currentTimeMillis();
+
+            // 调用DeepSeek API生成报告
+            String report = deepSeekApiClient.sendChatRequestWithRetry(messages);
+
+            long endTime = System.currentTimeMillis();
+            log.info("详细报告生成成功！耗时: {} 毫秒，报告长度: {} 字符", endTime - startTime, report.length());
+
+            return report;
+
+        } catch (Exception e) {
+            log.error("生成详细报告失败", e);
+            throw new BusinessException("生成报告失败，AI服务暂时不可用，请稍后重试");
+        }
+    }
+
+    /**
+     * 生成报告 - 测试专用版本（使用更长超时时间）
+     */
+    public String generateReportForTest(String prompt) {
+        try {
+            log.info("=== 开始生成测试报告（测试专用版本）===");
 
             // 构建专门用于报告生成的消息列表
             List<Map<String, String>> messages = new ArrayList<>();
@@ -346,15 +386,17 @@ public class ChatServiceImpl implements ChatService {
             userMessage.put("content", prompt);
             messages.add(userMessage);
 
-            // 调用DeepSeek API生成报告
-            String report = deepSeekApiClient.sendChatRequestWithRetry(messages);
+            log.info("测试版本：提示词长度 = {} 字符", prompt.length());
 
-            log.info("测试报告生成成功，长度: {}", report.length());
+            // 调用DeepSeek API生成报告 - 使用测试专用方法
+            String report = deepSeekApiClient.sendChatRequestWithRetryForTest(messages);
+
+            log.info("测试报告生成成功，长度: {} 字符", report.length());
             return report;
 
         } catch (Exception e) {
             log.error("生成测试报告失败", e);
-            throw new BusinessException("生成报告失败：" + e.getMessage());
+            throw new BusinessException("生成测试报告失败：" + e.getMessage());
         }
     }
 
